@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.CustomerDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.Customer" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="lastmodify" property="lastmodify" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cusid, cusname, telephone
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from customer
+    where id = #{id,jdbcType=INTEGER}
+    order by cusname asc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zeng.ocs.po.Customer" >
+    insert into customer (id, cusid, cusname, 
+      telephone)
+    values (#{id,jdbcType=INTEGER}, #{cusid,jdbcType=CHAR}, #{cusname,jdbcType=VARCHAR}, 
+      #{telephone,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zeng.ocs.po.Customer" >
+    insert into customer
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cusid != null" >
+        cusid,
+      </if>
+      <if test="cusname != null" >
+        cusname,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cusid != null" >
+        #{cusid,jdbcType=CHAR},
+      </if>
+      <if test="cusname != null" >
+        #{cusname,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zeng.ocs.po.Customer" >
+    update customer
+    <set >
+      <if test="cusid != null" >
+        cusid = #{cusid,jdbcType=CHAR},
+      </if>
+      <if test="cusname != null" >
+        cusname = #{cusname,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zeng.ocs.po.Customer" >
+    update customer
+    set cusid = #{cusid,jdbcType=CHAR},
+      cusname = #{cusname,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+   <select id="selectCutomerBytelephoneAndCusname" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.Customer"  >
+	   select
+	    	 *
+	   from customer where  cusname like concat('%', #{cusname,jdbcType=VARCHAR},'%') 
+  </select>
+  
+   <update id="updateBycusId" parameterType="com.zeng.ocs.po.Customer" >
+    update customer
+    set 
+      cusname = #{cusname,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR}
+    where cusid like concat('%',#{cusid,jdbcType=CHAR},'%')
+  </update>
+  
+  
+  
+  
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.Customer"  >
+	   select
+	    	 *
+	   from customer 
+  </select>
+<!-- 	  导入修改2 -->
+  <resultMap id="BaseResultImportMap" type="com.zeng.ocs.po.Customer" >
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectCustomerByCusName" resultMap="BaseResultImportMap" parameterType="java.lang.String"  >
+	   select
+	    	cusid,cusname
+	   from customer where cusname = #{cusname,jdbcType=VARCHAR} limit 1
+  </select>
+  
+</mapper>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.DtVoiceDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.DtVoiceVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="_date" property="date"/>
+    <result column="traid" property="traid" jdbcType="VARCHAR" />
+    <result column="callingno" property="callingno" jdbcType="VARCHAR" />
+    <result column="calledno" property="calledno" jdbcType="VARCHAR" />
+    <result column="begintime" property="begintime" jdbcType="VARCHAR" />
+    <result column="endtime" property="endtime" jdbcType="VARCHAR" />
+    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+    <result column="typedemand" property="typedemand" jdbcType="VARCHAR" />
+    <result column="systemsrc" property="systemsrc" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusName" jdbcType="VARCHAR" />
+    <result column="tmonth" property="tmonth"/>
+    <result column="typetimeing" property="typetimeing"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dtvoice.id as id, dtvoice.cusid as cusid, dtvoice._date as _date ,left(dtvoice._date,7) as tmonth, dtvoice.traid as traid,dtvoice.callingno as callingno, dtvoice.calledno as calledno ,dtvoice.begintime as begintime,dtvoice.endtime as endtime, dtvoice.totalseconds as totalseconds, dtvoice.typeid as typeid, dtvoice.ntype as ntype,dtvoice.typedemand as typedemand,dtvoice.systemsrc as systemsrc,customer.cusname as cusname,custype.typetimeing as typetimeing
+  </sql>
+  
+   <select id="findDtVoiceList" resultMap="BaseResultMap" parameterType="com.zeng.ocs.util.PageBean">
+	    select
+	     <include refid="Base_Column_List" />
+	      from dtvoice,customer,custype
+	      where dtvoice.cusid=customer.cusid and dtvoice.typeid=custype.typeid
+	      limit #{begin},#{limit}
+	</select>
+  
+     <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.DtVoiceVo">
+     
+     <choose>
+     	<when test="( callingno == null and calledno == null  and typedemand == null) or (    callingno =='' and calledno =='' and typedemand =='') ">
+     	
+	     		select ifnull(sum(sl),0) from dtvoice_c	    		
+	    				<where>
+	    					<if test="cusid != null and cusid !=''">
+					      		cusid=#{cusid}
+					   		</if>
+				    		<if test="ntype != null and ntype!=''">
+					      		and ntype=#{ntype}
+					      	</if>
+					      	<if test="typeid != null and typeid !=''">
+					      		and typeid=#{typeid}
+					      	</if>
+					      	<if test="begintime != null and begintime!=''">
+					      		and _date <![CDATA[ >=  ]]> #{begintime}
+					      	</if>
+					      	<if test="endtime != null and endtime!=''">
+					      		<![CDATA[ and _date<=#{endtime}  ]]>
+					      	</if>
+	    				</where> 
+     	
+     	</when>
+     	<otherwise>
+     		 select count(*) from dtvoice	    		
+						    				<where>
+						    					<if test="cusid != null and cusid !=''">
+										      		cusid=#{cusid}
+										   		</if>
+									    		<if test="ntype != null and ntype!=''">
+										      		and ntype=#{ntype}
+										      	</if>
+										      	<if test="typeid != null and typeid !=''">
+										      		and typeid=#{typeid}
+										      	</if>
+										      	<if test="callingno != null and callingno!=''">
+										      		and callingno like concat('%',#{callingno},'%')
+										      	</if>
+										      	<if test="calledno != null and calledno!=''">
+										      		and calledno like concat('%',#{calledno},'%')
+										      	</if>
+										      	<if test="begintime != null and begintime!=''">
+										      		and _date>=#{begintime}
+										      	</if>
+										      	<if test="endtime != null and endtime!=''">
+										      		<![CDATA[ and _date<=#{endtime}  ]]>
+										      	</if>
+										      	<if test="typedemand != null and typedemand !=''">
+										      		and typedemand like concat('%',#{typedemand},'%')
+										      	</if>
+						    				</where> 			     	    
+			 
+     	</otherwise>
+     </choose>
+    </select> 
+  
+  
+  <select id="selectTotalSecond" resultType="java.math.BigDecimal" parameterType="com.zeng.ocs.po.DtVoiceVo">
+     
+     <choose>
+     	<when test="( callingno == null and calledno == null  and typedemand == null) or (    callingno =='' and calledno =='' and typedemand =='') ">
+     	
+	     		select ifnull(sum(totalseconds ),0) from dtvoice_c	    		
+	    				<where>
+	    					<if test="cusid != null and cusid !=''">
+					      		cusid=#{cusid}
+					   		</if>
+				    		<if test="ntype != null and ntype!=''">
+					      		and ntype=#{ntype}
+					      	</if>
+					      	<if test="typeid != null and typeid !=''">
+					      		and typeid=#{typeid}
+					      	</if>
+					      	<if test="begintime != null and begintime!=''">
+					      		and _date <![CDATA[ >=  ]]> #{begintime}
+					      	</if>
+					      	<if test="endtime != null and endtime!=''">
+					      		<![CDATA[ and _date<=#{endtime}  ]]>
+					      	</if>
+	    				</where> 
+     	
+     	</when>
+     	<otherwise>
+  			select ifnull(sum(totalseconds ),0) from dtvoice	    		
+	    				<where>
+						    					<if test="cusid != null and cusid !=''">
+										      		cusid=#{cusid}
+										   		</if>
+									    		<if test="ntype != null and ntype!=''">
+										      		and ntype=#{ntype}
+										      	</if>
+										      	<if test="typeid != null and typeid !=''">
+										      		and typeid=#{typeid}
+										      	</if>
+										      	<if test="callingno != null and callingno!=''">
+										      		and callingno like concat('%',#{callingno},'%')
+										      	</if>
+										      	<if test="calledno != null and calledno!=''">
+										      		and calledno like concat('%',#{calledno},'%')
+										      	</if>
+										      	<if test="begintime != null and begintime!=''">
+										      		and _date>=#{begintime}
+										      	</if>
+										      	<if test="endtime != null and endtime!=''">
+										      		<![CDATA[ and _date<=#{endtime}  ]]>
+										      	</if>
+										      	<if test="typedemand != null and typedemand !=''">
+										      		and typedemand like concat('%',#{typedemand},'%')
+										      	</if>
+						</where> 
+       	</otherwise>
+     </choose>
+    </select> 
+  
+  
+  
+  
+   <select id="findAllDtVoice" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.DtVoiceVo">
+	    select
+	     <include refid="Base_Column_List"/>
+	      from (select * from dtvoice 
+	      <where>
+	      	<if test="cusid != null and cusid !=''">
+	      		and dtvoice.cusid=#{cusid}
+	      	</if>
+	      	<if test="ntype != null and ntype!=''">
+	      		and ntype=#{ntype}
+	      	</if>
+	      	<if test="typeid != null and typeid!=''">
+	      		and typeid=#{typeid}
+	      	</if>
+	      	<if test="callingno != null and callingno!=''">
+	      		and callingno like concat('%',#{callingno},'%')
+	      	</if>
+	      	<if test="calledno != null and calledno!=''">
+	      		and calledno like concat('%',#{calledno},'%')
+	      	</if>
+	      	<if test="begintime != null and begintime!=''">
+	      		and _date>=#{begintime}
+	      	</if>
+	      	<if test="endtime != null and endtime!=''">
+	      		<![CDATA[ and _date<=#{endtime}  ]]>
+	      	</if>	      	
+	      	<if test="typedemand != null and typedemand !=''">
+	      		and typedemand like concat('%',#{typedemand},'%')
+	      	</if>	      	
+	      </where>
+	      
+	       limit #{begin},#{limit}) as dtvoice
+	       join customer on dtvoice.cusid = customer.cusid  
+	        join custype  on  dtvoice.cusid = custype.cusid and dtvoice.typeid=custype.typeid		    	 
+		    order by dtvoice.id    
+	</select>
+	
+</mapper>

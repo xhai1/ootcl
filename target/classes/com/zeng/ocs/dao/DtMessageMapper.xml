@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.DtMessageDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.DtMessageVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="port" property="port" jdbcType="VARCHAR" />
+    <result column="purpose" property="purpose" jdbcType="VARCHAR" />
+    <result column="updatetime" property="updatetime" jdbcType="VARCHAR" />
+    <result column="messageid" property="messageid" jdbcType="VARCHAR" />
+    <result column="phoneno" property="phoneno" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="message" property="message" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="tmonth" property="tmonth" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  	dtmessage.id as id,dtmessage.cusid as cusid,dtmessage.port as port,dtmessage.purpose as purpose,left(dtmessage.updatetime,10) as updatetime,left(dtmessage.updatetime,7) as tmonth,dtmessage.messageid as messageid,dtmessage.phoneno as phoneno,dtmessage.operator as operator,dtmessage.message as message,customer.cusname as cusname
+  </sql>
+  
+    <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.DtMessageVo">
+    		
+    		<choose>
+    		
+			     	<when test="( phoneno  == null and operator == null ) or (    phoneno  =='' and operator =='') ">
+			     	
+				     		select ifnull(sum(sl),0) from dtmessage_c   	    		
+				    				<where>
+							    		<if test="cusid != null and cusid !=''">
+								      		and cusid=#{cusid}
+								      	</if>						      
+								      	<if test="begintime != null and begintime !=''">
+								      		and updatetime <![CDATA[ >= ]]>#{begintime}
+								      	</if>
+								      	<if test="endtime != null and endtime !=''">
+								      		<![CDATA[ and updatetime<=#{endtime}  ]]>
+								      	</if>
+					    			</where>   
+			     	
+			     	</when>
+			     	
+			     	<otherwise>    		
+		    		
+		    			select count(*) from dtmessage
+			    			<where>
+					    		<if test="cusid != null and cusid !=''">
+						      		and cusid=#{cusid}
+						      	</if>
+						      	<if test="phoneno != null and phoneno !=''">
+						      		and phoneno like concat('%',#{phoneno},'%')
+						      	</if>
+						      	<if test="operator != null and operator !=''">
+						      		and operator like concat('%',#{phoneno},'%')
+						      	</if>
+						      	<if test="begintime != null and begintime !=''">
+						      		and updatetime  <![CDATA[ >=  ]]>#{begintime}
+						      	</if>
+						      	<if test="endtime != null and endtime !=''">
+						      		<![CDATA[ and updatetime<=#{endtime}  ]]>
+						      	</if>
+			    			</where>   
+		    			
+		    		</otherwise> 
+    		
+    		</choose>		    	
+  </select>
+  
+   <select id="findAllDtMessage" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.DtMessageVo">	
+   
+   
+	    select
+	     <include refid="Base_Column_List"/>
+	      from (select * from dtmessage 
+			<where>
+			<if test="cusid != null and cusid != ''">
+				and cusid=#{cusid} 
+			</if>
+			<if test="phoneno != null and phoneno !=''">
+	      		and phoneno like concat('%',#{phoneno},'%')
+	      	</if>
+	      	<if test="operator != null and operator !=''">
+	      		and operator like concat('%',#{phoneno},'%')
+	      	</if>
+	      	<if test="begintime != null and begintime !=''">
+	      		and updatetime>=#{begintime}
+	      	</if>
+	      	<if test="endtime != null and endtime !=''">
+	      		<![CDATA[ and updatetime  <=  #{endtime}  ]]>
+	      	</if>
+			</where>
+			 limit #{begin},#{limit}) as dtmessage 
+			 left join customer  on
+	         dtmessage.cusid=customer.cusid 
+	         order by dtmessage.id
+	</select>
+  
+</mapper>

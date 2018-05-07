@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.MutilMedia981Dao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.MutilMedia981" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="itenantid" property="itenantId" jdbcType="VARCHAR" />
+    <result column="extnumber" property="extNumber" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="bigtype" property="bigType" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusName" jdbcType="VARCHAR" />
+    <result column="updatetime" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cusextphone.id as id, itenantid, extnumber,cusextphone.telephone as telephone,bigtype,cusname,updatetime
+  </sql>
+    
+    <select id="selectAllForExport" resultMap="BaseResultMap" >  		
+  		select 		
+  		   <include refid="Base_Column_List" />  	
+		from cusextphone  left join customer using(cusid) 
+ 	</select>
+   <select id="selectCustomer" resultType="java.lang.String" parameterType="com.zeng.ocs.po.MutilMedia981" >  		
+  		select 		
+  		   cusid  	
+		from customer where cusname like #{cusName,jdbcType=VARCHAR} limit 1
+ 	</select>
+    <!-- 获取数量  -->
+  <select id="getCountByCondition" resultType="java.lang.Long" parameterType="com.zeng.ocs.util.PaginationUtil" >
+	    
+	select 
+    	 count(*)
+    from 
+    
+    	(select cusid ,telephone from cusextphone
+    		<where>
+	    		<if test="condition1 != null and condition1!=''">
+	    			 extnumber like concat('%',#{condition1,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition2 != null and condition2!=''">
+	    			 and telephone like concat('%',#{condition2,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition3 != null and condition3 != ''">
+		    		and bigtype like  concat('%',#{condition3,jdbcType=VARCHAR},'%') 
+		    	</if> 		 			    	    
+    		 </where>   
+    	)  A
+	    left join customer using(cusid) 
+  </select> 
+
+  
+  <!-- 返回指定数据  -->
+  <select id="selectByCondition" resultMap="BaseResultMap" parameterType="com.zeng.ocs.util.PaginationUtil" >
+   		 select 
+  				a.id as id,  itenantid,  extnumber,a.telephone as telephone,
+  				bigtype ,cusname, updatetime
+  		 from
+				(select  * from cusextphone 				
+					<where>
+			    		<if test="condition1 != null and condition1!=''">
+			    			extnumber like concat('%',#{condition1,jdbcType=VARCHAR},'%')
+					    </if>
+					    <if test="condition2 != null and condition2!=''">
+			    			 and telephone like concat('%',#{condition2,jdbcType=VARCHAR},'%')
+					    </if>
+					    <if test="condition3 != null and condition3!=''">
+				    		and	 bigtype like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+					   </if>						    	    
+	    		   </where>	
+	    		   	order by id desc limit #{begin,jdbcType=INTEGER},#{end,jdbcType=INTEGER}					
+					) a 
+				left join customer using(cusid)	
+					order by  a.id desc
+						
+  </select>
+  
+  
+
+  
+  
+  
+  <select id="selectAll981BySearch" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.MutilMedia981">  		
+  		select 		
+  		   <include refid="Base_Column_List" />  		  
+		from cusextphone left join cusphone using(telephone) left join customer using(cusid) where extnumber like concat('%',#{extNumber,jdbcType=VARCHAR},'%') 
+			and cusextphone.telephone  like concat('%',#{telephone,jdbcType=VARCHAR},'%')  and bigtype  like concat('%',#{bigType,jdbcType=VARCHAR},'%')
+		
+  </select>
+
+  
+<!--    <select id="selectUpdateMulti981" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.MutilMedia981">  		
+  		select 
+  				a.id as id, itenantid, extnumber,a.telephone as telephone,bigtype ,cusname,updatetime
+  		 from
+				(select  * from cusextphone where id = #{id,jdbcType=INTEGER} and telephone like  concat('%',#{telephone,jdbcType=VARCHAR},'%') ) a 
+				left join cusphone using(telephone) left join customer using(cusid)
+
+
+  </select> -->
+   
+   <update id="updateByPrimaryKeySelective" parameterType="com.zeng.ocs.po.MutilMedia981" >
+    update cusextphone
+    <set >
+      <if test="itenantId != null" >
+        itenantid = #{itenantId,jdbcType=CHAR},
+      </if>
+      <if test="extNumber != null" >
+        extnumber = #{extNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="cusId != null" >
+        cusid = #{cusId,jdbcType=VARCHAR},
+      </if>
+      <if test="bigType != null" >
+        bigtype = #{bigType,jdbcType=VARCHAR},
+      </if>
+     
+        updatetime = now()
+          
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+   <!--  添加更新-->
+  <update id="UpdateHotLineFromMulti981" parameterType="com.zeng.ocs.po.MutilMedia981" >
+    update cusphone
+    <set >     
+      <if test="bigType != null" >
+        bigtype = #{bigType,jdbcType=VARCHAR},
+      </if>    
+    </set>
+    where telephone =  #{telephone,jdbcType=VARCHAR}
+  </update>
+  <update id="UpdateCustomerFromMulti981" parameterType="com.zeng.ocs.po.MutilMedia981" >
+    update customer
+    <set >     
+      <if test="cusName != null" >
+        cusname = #{cusName,jdbcType=VARCHAR},
+      </if>    
+    </set>
+    where cusid = #{cusId,jdbcType=VARCHAR}
+  </update>
+  
+  
+    <insert id="insertMulti981" parameterType="com.zeng.ocs.po.MutilMedia981" >
+   insert into cusextphone
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itenantId != null" >
+        itenantid,
+      </if>      
+      <if test="extNumber != null" >
+        extnumber,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      
+        updatetime,
+      
+      <if test="cusId != null" >
+        cusid,
+      </if>
+      <if test="bigType != null" >
+        bigtype
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itenantId != null" >
+        #{itenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="extNumber != null" >
+        #{extNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+     
+       now(),
+      
+       <if test="cusId != null" >
+        #{cusId,jdbcType=VARCHAR},
+      </if>     
+       <if test="bigType != null" >
+    	  #{bigType,jdbcType=VARCHAR}
+      </if>        
+    </trim>  
+  </insert>
+  
+  <!-- 导入查询 -->
+   <select id="selectByItenantId"  resultMap="importBaseResultMap" parameterType="com.zeng.ocs.po.MutilMedia981" >
+   		select 
+   			id , itenantid , extnumber , telephone,bigtype
+   		from cusextphone 
+   		where extnumber = #{extNumber,jdbcType=VARCHAR}  limit 1 		  
+  </select>
+  <resultMap id="importBaseResultMap" type="com.zeng.ocs.po.MutilMedia981" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="itenantid" property="itenantId" jdbcType="VARCHAR" />
+    <result column="extnumber" property="extNumber" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="bigtype" property="bigType" jdbcType="VARCHAR" />
+  </resultMap>
+  
+    <!-- 导入查询 -->
+  <select id="selectByTelephone"  resultMap="importMap" parameterType="com.zeng.ocs.po.MutilMedia981" >
+   		select 
+   			 A.cusid as cusid, A.bigtype as bigtype , cusname
+   		from (select cusid, bigtype   from cusphone
+   			<where>
+	    		<if test="telephone != null and telephone!=''">
+	    			 telephone  = #{telephone,jdbcType=VARCHAR} 
+			    </if>			    
+    		 </where>
+   			
+   		)	A
+
+		left  join customer on  A.cusid = customer.cusid
+  </select>
+   <resultMap id="importMap" type="com.zeng.ocs.po.HotLine" >
+    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+    <result column="bigtype" property="bigType" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+<!--     <insert id="batchInsert" parameterType="java.util.List" >
+   
+   		insert into cusextphone(itenantid,extnumber,telephone,updatetime,cusid,bigtype)
+   		values
+   		<foreach collection="list" item="item" index="index" separator=",">
+	   		(
+		   		#{item.itenantId,jdbcType=VARCHAR},#{item.extNumber,jdbcType=VARCHAR},
+		   		#{item.telephone,jdbcType=VARCHAR},now(),#{item.cusId,jdbcType=VARCHAR}
+		   		,#{item.bigType,jdbcType=VARCHAR}
+	   		)
+   		</foreach>
+  </insert> -->
+  
+   
+  <insert id="insertSelectiveMulti981" parameterType="com.zeng.ocs.po.MutilMedia981">
+    insert into cusextphone
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itenantId != null">
+        itenantid,
+      </if>
+      <if test="extNumber != null">
+        extnumber,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+        updatetime,
+      <if test="cusId != null">
+        cusid,
+      </if>
+      <if test="bigType != null">
+        bigtype,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    
+     <if test="itenantId != null">
+       #{itenantId,jdbcType=INTEGER},
+      </if>
+      <if test="extNumber != null">
+        #{extNumber,jdbcType=INTEGER},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=INTEGER},
+      </if>
+        now(),
+      <if test="cusId != null">
+        #{cusId,jdbcType=INTEGER},
+      </if>
+      <if test="bigType != null">
+         #{bigType,jdbcType=INTEGER},
+      </if>
+    </trim>
+    </insert>
+    
+  
+  <select id="autoselectByTelephone" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.MutilMedia981" >
+				
+		select 
+  				A.bigtype as bigtype ,cusname
+  		 from		
+			(select  cusid,bigtype from cusphone where telephone like  concat('%',#{telephone,jdbcType=VARCHAR},'%')) A
+			left join  	customer using(cusid) limit 1
+				
+  </select>
+  
+  <delete id="deleteMulti981"  parameterType="com.zeng.ocs.po.MutilMedia981">
+  		delete from cusextphone where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  </mapper>

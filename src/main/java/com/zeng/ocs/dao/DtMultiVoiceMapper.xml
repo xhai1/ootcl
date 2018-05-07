@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.DtMultiVoiceDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.DtMultiVoiceVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="traid" property="traid" jdbcType="VARCHAR"/>
+    <result column="callingno" property="callingno" jdbcType="VARCHAR" />
+    <result column="callno" property="callno" jdbcType="VARCHAR" />
+    <result column="calledno" property="calledno" jdbcType="VARCHAR" />
+    <result column="totalseconds" property="totalseconds"/>
+    <result column="_date" property="date" jdbcType="VARCHAR" />
+    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+    <result column="systemsrc" property="systemsrc" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusName" jdbcType="VARCHAR" />
+    <result column="tend" property="tend" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  	dtmultivoice.id as id,dtmultivoice.cusid as cusid,dtmultivoice.traid as traid,
+  	dtmultivoice.callingno as callingno,dtmultivoice.calledno as calledno,
+  	dtmultivoice.totalseconds as totalseconds,dtmultivoice._date as _date,
+  	dtmultivoice.ntype as ntype,dtmultivoice.systemsrc as systemsrc,customer.cusname as cusname,
+  	dtmultivoice.callno as callno,dtmultivoice.tend as tend
+  </sql>
+  
+    <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.DtMultiVoiceVo">
+    	<choose>
+	     	<when test="( callingno == null and calledno == null  and calledno == null) or (    callingno =='' and calledno =='' and calledno =='') ">
+	     	
+		     		select ifnull(sum(sl),0) from dtmultivoice_c 	    		
+		    				<where>
+		    					<if test="cusid != null and cusid !=''">
+						      		and cusid=#{cusid}
+						      	</if>
+						      	<if test="beginTime != null and beginTime !=''">
+						      		 and _date <![CDATA[ >= ]]> #{beginTime} 
+						      	</if>
+						      	<if test="endTime != null and endTime !=''">
+						      		and  _date <![CDATA[ <=  ]]> concat(#{endTime},' 23:59:59') 
+						      	</if>					      	
+						      	<if test="ntype != null and ntype !=''">
+						      		and ntype like concat('%',#{ntype},'%')
+						      	</if>
+		    				</where> 
+	     	
+	     	</when>
+	     	<otherwise>
+	     	
+	    			select count(*) from dtmultivoice
+	    			<where>
+			    		<if test="cusid != null and cusid !=''">
+				      		and cusid=#{cusid}
+				      	</if>
+				      	<if test="beginTime != null and beginTime !=''">
+				      		 and _date <![CDATA[ >= ]]> #{beginTime} 
+				      	</if>
+				      	<if test="endTime != null and endTime !=''">
+				      		and  _date <![CDATA[ <=  ]]> concat(#{endTime},' 23:59:59') 
+				      	</if>
+				      	<if test="callingno != null and callingno !=''">
+				      		and callingno like concat('%',#{callingno},'%')
+				      	</if>
+				      	<if test="callno != null and callno !=''">
+				      		and callno like concat('%',#{callno},'%')
+				      	</if>
+				      	<if test="calledno != null and calledno !=''">
+				      		and calledno like concat('%',#{calledno},'%')
+				      	</if>
+				      	<if test="ntype != null and ntype !=''">
+				      		and ntype like concat('%',#{ntype},'%')
+				      	</if>
+	    			</where>	
+	    			
+	     	</otherwise>
+    	</choose>
+    
+    
+  </select>
+  
+  
+  <select id="selectTotalSecond" resultType="java.math.BigDecimal" parameterType="com.zeng.ocs.po.DtMultiVoiceVo">
+    	<choose>
+	     	<when test="( callingno == null and calledno == null  and calledno == null) or (    callingno =='' and calledno =='' and calledno =='') ">
+	     	
+		     		select ifnull(sum(totalseconds),0) from dtmultivoice_c 	    		
+		    				<where>
+		    					<if test="cusid != null and cusid !=''">
+						      		and cusid=#{cusid}
+						      	</if>
+						      	<if test="beginTime != null and beginTime !=''">
+						      		 and _date <![CDATA[ >= ]]> #{beginTime} 
+						      	</if>
+						      	<if test="endTime != null and endTime !=''">
+						      		and  _date <![CDATA[ <=  ]]> concat(#{endTime},' 23:59:59') 
+						      	</if>					      	
+						      	<if test="ntype != null and ntype !=''">
+						      		and ntype like concat('%',#{ntype},'%')
+						      	</if>
+		    				</where> 
+	     	
+	     	</when>
+	     	<otherwise>
+	     	
+	     			select ifnull(sum(totalseconds),0) from dtmultivoice 	    		
+		    				<where>
+		    					<if test="cusid != null and cusid !=''">
+						      		and cusid=#{cusid}
+						      	</if>
+						      	<if test="beginTime != null and beginTime !=''">
+						      		 and _date <![CDATA[ >= ]]> #{beginTime} 
+						      	</if>
+						      	<if test="endTime != null and endTime !=''">
+						      		and  _date <![CDATA[ <=  ]]> concat(#{endTime},' 23:59:59') 
+						      	</if>
+						      	<if test="callingno != null and callingno !=''">
+						      		and callingno like concat('%',#{callingno},'%')
+						      	</if>
+						      	<if test="callno != null and callno !=''">
+						      		and callno like concat('%',#{callno},'%')
+						      	</if>
+						      	<if test="calledno != null and calledno !=''">
+						      		and calledno like concat('%',#{calledno},'%')
+						      	</if>
+						      	<if test="ntype != null and ntype !=''">
+						      		and ntype like concat('%',#{ntype},'%')
+						      	</if>
+		    				</where> 
+	     	
+	     	
+  	     	</otherwise>
+    	</choose>
+ </select>
+ 
+   <select id="findAllDtMultiVoice" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.DtMultiVoiceVo">
+	    select
+	     <include refid="Base_Column_List"/>
+	      from (select * from dtmultivoice
+	      <where>
+	      	<if test="cusid != null and cusid !=''">
+	      		and dtmultivoice.cusid=#{cusid}
+	      	</if>
+	      	<if test="beginTime != null and beginTime !=''">
+			      		 and _date <![CDATA[ >= ]]> #{beginTime} 
+			      	</if>
+			      	<if test="endTime != null and endTime !=''">
+			      		and  _date <![CDATA[ <=  ]]> concat(#{endTime},' 23:59:59')
+			      	</if>
+	      	<if test="callingno != null and callingno !=''">
+	      		and callingno like concat('%',#{callingno},'%')
+	      	</if>
+	      	<if test="callno != null and callno !=''">
+	      		and callno like concat('%',#{callno},'%')
+	      	</if>
+	      	<if test="calledno != null and calledno !=''">
+	      		and calledno like concat('%',#{calledno},'%')
+	      	</if>
+	      	<if test="ntype != null and ntype !=''">
+	      		and ntype like concat('%',#{ntype},'%')
+	      	</if>
+	      </where>
+	       limit #{begin},#{limit}) as dtmultivoice join customer
+	      
+	      	on dtmultivoice.cusid=customer.cusid
+	      
+	      order by dtmultivoice.id 
+	</select>
+</mapper>

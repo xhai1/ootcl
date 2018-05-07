@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.DtOnlineDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.DtOlServiceVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="_date" property="date"/>
+    <result column="mediaid" property="mediaid" jdbcType="VARCHAR" />
+    <result column="mediatype" property="mediatype" jdbcType="VARCHAR" />
+    <result column="mediasrc" property="mediasrc" jdbcType="VARCHAR" />
+    <result column="businesstype" property="businesstype" jdbcType="VARCHAR" />
+    <result column="begintime" property="begintime" jdbcType="VARCHAR" />
+    <result column="endtime" property="endtime" jdbcType="VARCHAR" />
+    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusName" jdbcType="VARCHAR" />
+    <result column="tmonth" property="tmonth"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+  	dtolservice.id as id,dtolservice.cusid as cusid,dtolservice._date as _date,left(dtolservice._date,7) as tmonth,dtolservice.mediaid as mediaid,dtolservice.mediatype as mediatype,dtolservice.mediasrc as mediasrc,dtolservice.businesstype as businesstype,dtolservice.begintime as begintime,dtolservice.endtime as endtime,dtolservice.totalseconds as totalseconds,customer.cusname as cusname
+  </sql>
+  
+    <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.DtOlServiceVo">
+    	<choose>
+     	<when test="( businesstype == null and mediasrc == null ) or (    businesstype =='' and mediasrc =='' ) ">
+     	
+	     		select ifnull(sum(sl),0) from dtolservice_c  	    		
+	    				<where>
+	    					<if test="cusid != null and cusid !=''">
+					      		and cusid=#{cusid}
+					      	</if>
+					      	<if test="mediatype != null and mediatype!=''">
+					      		and mediatype like concat('%',#{mediatype},'%')
+					      	</if>					      
+					      	<if test="begintime != null and begintime!=''">
+					      		and _date>=#{begintime}
+					      	</if>
+					      	<if test="endtime != null and endtime!=''">
+					      		<![CDATA[ and _date<=#{endtime}  ]]>
+					      	</if>					      	
+	    				</where> 
+     	
+     	</when>
+     	<otherwise>
+     	
+    			select count(*) from dtolservice
+	    			<where>
+			    		<if test="cusid != null and cusid !=''">
+				      		and cusid=#{cusid}
+				      	</if>
+				      	<if test="mediatype != null and mediatype!=''">
+				      		and mediatype like concat('%',#{mediatype},'%')
+				      	</if>
+				      	<if test="businesstype != null and businesstype !=''">
+				      		and businesstype like concat('%',#{businesstype},'%')
+				      	</if>
+				      	<if test="begintime != null and begintime!=''">
+				      		and _date>=#{begintime}
+				      	</if>
+				      	<if test="endtime != null and endtime!=''">
+				      		<![CDATA[ and _date<=#{endtime}  ]]>
+				      	</if>
+				      	<if test="mediasrc != null and mediasrc !=''">
+				      		and mediasrc like concat('%',#{mediasrc},'%')
+				      	</if>
+	    			</where>
+     	
+     	</otherwise>
+    	</choose>
+    
+    		 	
+  </select>
+  
+   <select id="findAllDtOlService" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.DtOlServiceVo">
+	    select
+	     <include refid="Base_Column_List"/>
+	      from (select * from dtolservice 
+	      <where>
+	      	<if test="cusid != null and cusid !=''">
+	      		and dtolservice.cusid=#{cusid}
+	      	</if>
+	      	<if test="mediatype != null and mediatype!=''">
+	      		and mediatype like concat('%',#{mediatype},'%')
+	      	</if>
+	      	<if test="businesstype != null and businesstype !=''">
+	      		and businesstype like concat('%',#{businesstype},'%')
+	      	</if>
+	      	<if test="begintime != null and begintime!=''">
+	      		and _date>=#{begintime}
+	      	</if>
+	      	<if test="endtime != null and endtime!=''">
+	      		<![CDATA[ and _date<=#{endtime}  ]]>
+	      	</if>
+	      	<if test="mediasrc != null and mediasrc !=''">
+	      		and mediasrc like concat('%',#{mediasrc},'%')
+	      	</if>
+	      </where>
+	       limit #{begin},#{limit}) as dtolservice join customer
+	     	on
+	      	dtolservice.cusid=customer.cusid
+	      	
+	     
+	      order by dtolservice.id
+	</select>
+</mapper>

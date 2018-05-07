@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.ComputeMoneyDao" >
+ 
+  <resultMap id="customerMap" type="com.zeng.ocs.po.Customer" >  	
+	  	<id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="cusid" property="cusid" jdbcType="CHAR" />
+	    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+	    <result column="telephone" property="telephone" jdbcType="VARCHAR" />  
+  </resultMap>
+  <select id="selectAllCustomer" resultMap="customerMap">
+		select * from customer
+  </select>
+  
+  
+  <resultMap id="CusTypeMap" type="com.zeng.ocs.po.CusType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="typetimeing" property="typetimeing" jdbcType="VARCHAR" />
+    <result column="business" property="business" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectCusType"  resultMap="CusTypeMap" parameterType="com.zeng.ocs.po.Customer">
+		select * from custype 
+		<if test="cusid != null and cusid != '' " >
+         where cusid = #{cusid,jdbcType=VARCHAR}
+      </if>
+  </select>
+  
+   <resultMap id="MoneyStandardMap" type="com.zeng.ocs.po.MoneyStandard" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+    <result column="mtype" property="mType" jdbcType="VARCHAR" />
+    <result column="iotype" property="ioType" jdbcType="VARCHAR" />
+    <result column="times" property="times" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+     <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="class" property="clazz" jdbcType="VARCHAR" />
+  </resultMap>
+   <select id="selectMoneyStandardForCustomer"  resultMap="MoneyStandardMap" parameterType="com.zeng.ocs.po.Customer">
+		select * from custiming 
+		<if test="cusid != null and cusid != '' " >
+         where cusid = #{cusid,jdbcType=VARCHAR}
+      	</if>
+  </select>
+  
+  <!-- 明细搜索开始  -->
+	    <resultMap id="DtVoiceMap" type="com.zeng.ocs.po.DtVoice" >
+		    <id column="id" property="id" jdbcType="BIGINT" />
+		    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+		    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+		    <result column="ntype" property="ntype"/>
+		    <result column="typeid" property="typeid"/>
+		    <result column="money" property="money" jdbcType="DOUBLE" />
+	    </resultMap>
+	    <!-- 使用id作为统计数量  -->
+	  <select id="selectDtVoiceByCondition"  resultMap="DtVoiceMap" parameterType="java.util.Map">
+			select cusid,typeid,ntype,money,sum(sl) as id ,sum(totalseconds) as totalseconds from dtvoice_c 
+			<where>
+				<if test="cusid != null and cusid != '' " >
+		           cusid = #{cusid,jdbcType=VARCHAR} 
+		      	</if>
+		      	<if test="currentMonth != null and currentMonth != '' " >
+		          and _date like concat('%',#{currentMonth,jdbcType=VARCHAR},'%') 
+		      	</if>		      	
+			</where> 
+			group by cusid,typeid,ntype,money
+	  </select>
+  
+  <resultMap id="DtOlServiceMap" type="com.zeng.ocs.po.DtOlService" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    <result column="mediatype" property="mediatype" jdbcType="VARCHAR" />
+    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+  </resultMap>
+  <!-- 此处totalseconds无需统计  -->
+  <select id="selectDtOlServiceByCondition"  resultMap="DtOlServiceMap" parameterType="java.util.Map">
+			select cusid , typeid , mediatype , money ,sum(sl)  as id ,sum(totalseconds) as totalseconds  from dtolservice_c 
+					<where>
+						<if test="cusid != null and cusid != '' " >
+					         cusid = #{cusid,jdbcType=VARCHAR} 
+					    </if>		   
+					    <if test="currentMonth != null and currentMonth != '' " >
+					          and _date like concat('%',#{currentMonth,jdbcType=VARCHAR},'%') 
+					    </if>
+					</where>
+			GROUP BY cusid , typeid , mediatype , money 		
+  </select>
+  
+  
+   	  <resultMap id="DtDtMultiVoiceMap" type="com.zeng.ocs.po.DtMultiVoice" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+	    <result column="bigtype" property="bigtype" jdbcType="VARCHAR" />
+	    <result column="totalseconds" property="totalseconds"/>
+	    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+	    <result column="money" property="money" jdbcType="DOUBLE" />
+	  </resultMap>
+    <select id="selectDtMultiVoiceByCondition"  resultMap="DtDtMultiVoiceMap" parameterType="java.util.Map">
+			select cusid , bigtype , ntype , money , sum(sl)  as id ,SUM(totalseconds) as totalseconds from dtmultivoice_c
+					<where>
+						<if test="cusid != null and cusid != '' " >
+					         cusid = #{cusid,jdbcType=VARCHAR} 
+					    </if>				   
+						 <if test="currentMonth != null and currentMonth != '' " >
+					          and _date like concat('%',#{currentMonth,jdbcType=VARCHAR},'%')
+					     </if>
+					</where>
+			GROUP BY cusid , bigtype , ntype , money	
+  </select>
+  
+  	 	<resultMap id="DtChgOrderMap" type="com.zeng.ocs.po.DtChgOrder" >
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="cusid" property="cusid" jdbcType="CHAR" />
+	    <result column="mode" property="mode" jdbcType="VARCHAR" />
+	    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+	    <result column="money" property="money" jdbcType="DOUBLE" />
+	    </resultMap>
+	 	<select id="selectDtChgOrderByCondition"  resultMap="DtChgOrderMap" parameterType="java.util.Map">
+			select cusid , typeid, mode ,  money , sum(sl)  as id from dtchgorder_c
+			<where>
+				<if test="cusid != null and cusid != '' " >
+			         cusid = #{cusid,jdbcType=VARCHAR}
+			    </if>			   
+			    <if test="currentMonth != null and currentMonth != '' " >
+		          and accdate like concat('%',#{currentMonth,jdbcType=VARCHAR},'%')
+		      	</if>			  
+			</where>
+			group by cusid , typeid, mode ,  money
+	    </select>
+  
+  
+  
+   <resultMap id="DtMessageMap" type="com.zeng.ocs.po.DtMessageVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+  </resultMap>
+  <select id="selectDtMessage"  resultMap="DtMessageMap" parameterType="java.util.Map">
+		select cusid,money,count(1) as id  from dtmessage_c 
+		<where>
+			<if test="cusid != null and cusid != '' " >
+         		cusid = #{cusid,jdbcType=VARCHAR}
+       		</if>
+			 <if test="currentMonth != null and currentMonth != '' " >
+		          and updatetime like concat('%',#{currentMonth,jdbcType=VARCHAR},'%')
+		     </if>
+		</where>
+		group by cusid,money
+  </select>
+  
+  
+  
+  
+  
+  <!--  搜索 -->
+    <resultMap id="customerSeaMap" type="com.zeng.ocs.po.Customer" >  	
+	  	<id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="cusid" property="cusid" jdbcType="CHAR" />
+	    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+  	</resultMap>
+   <select id="selectCustomerForSearch"  resultMap="customerSeaMap" parameterType="com.zeng.ocs.util.PaginationUtil">
+		select id,cusid,cusname from customer 
+		<where>
+			<if test="condition1 != null and condition1 != '' " >
+         		cusid = #{condition1,jdbcType=VARCHAR}
+       		</if>       		
+		</where>
+		limit 1
+  </select>
+  
+  
+   <resultMap id="CusTypeSearchMap" type="com.zeng.ocs.po.CusType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    <result column="typetimeing" property="typetimeing" jdbcType="VARCHAR" />   
+  </resultMap>
+  <select id="selectCusTypeForSearch"  resultMap="CusTypeSearchMap" parameterType="java.util.Map">
+		select id,cusid,typeid,typetimeing from custype 
+		<where>
+			<if test="cusid != null and cusid != '' " >
+         		cusid = #{cusid,jdbcType=VARCHAR}
+       		</if> 
+       		<if test="typetimeing != null and typetimeing != '' " >
+         		and typetimeing = #{typetimeing,jdbcType=VARCHAR}
+       		</if>        		
+		</where>
+		limit 1
+  </select>  
+  
+   		<resultMap id="DtVoiceSearchMap" type="com.zeng.ocs.po.DtVoice" >
+		    <id column="id" property="id" jdbcType="BIGINT" />
+		    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+		    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+		    <result column="ntype" property="ntype"/>
+		    <result column="typeid" property="typeid"/>
+		    <result column="money" property="money" jdbcType="DOUBLE" />
+	    </resultMap>
+	  <select id="selectDtVoiceForSea"  resultMap="DtVoiceSearchMap" parameterType="java.util.Map">
+			select cusid,typeid,ntype,money,sum(sl) as id ,sum(totalseconds) as totalseconds from dtvoice_c 
+			<where>
+				<if test="cusid != null and cusid != '' " >
+		           cusid = #{cusid,jdbcType=VARCHAR} 
+		      	</if>
+		      	<if test="startTime != null and startTime != '' " >
+		          and _date <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+		      	</if>
+		      	<if test="endTime != null and endTime != '' " >
+		          and _date <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+		     </if>
+		      	<if test="typeid != null and typeid != '' " >
+		           and typeid = #{typeid,jdbcType=VARCHAR}
+		      	</if>
+		      	<!-- <if test="ntype != null and ntype != '' " >
+		           and ntype = #{ntype,jdbcType=VARCHAR}
+		      	</if> -->
+			</where> 
+			group by cusid,typeid,ntype,money
+	  </select>
+  
+  	
+			<resultMap id="DtDtMultiVoiceSearchMap" type="com.zeng.ocs.po.DtMultiVoice" >
+			    <id column="id" property="id" jdbcType="BIGINT" />
+			    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+			    <result column="totalseconds" property="totalseconds"/>
+			    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+			    <result column="money" property="money" jdbcType="DOUBLE" />
+		    </resultMap>
+    <select id="selectDtMultiVoiceForSea"  resultMap="DtDtMultiVoiceSearchMap" parameterType="java.util.Map">
+		select cusid ,ntype,money,sum(sl) as id ,sum(totalseconds) as totalseconds  from dtmultivoice_c 
+		<where>
+			<if test="cusid != null and cusid != '' " >
+		         cusid = #{cusid,jdbcType=VARCHAR} 
+		    </if>
+			<if test="bigtype != null and bigtype != '' " >
+		         and bigtype  = #{bigtype,jdbcType=VARCHAR}
+		    </if>
+		   <!--  <if test="ntype != null and ntype != '' " >
+		         and ntype  = #{ntype,jdbcType=VARCHAR}
+		    </if> -->
+			 <if test="startTime != null and startTime != '' " >
+		          and _date <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+		      	</if>
+		      	<if test="endTime != null and endTime != '' " >
+		          and _date <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+		     </if>
+		</where>
+		group by cusid,ntype,money
+  	</select>  
+  
+  
+  
+    <resultMap id="DtOlServiceSeaMap" type="com.zeng.ocs.po.DtOlService" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+	    <result column="mediatype" property="mediatype" jdbcType="VARCHAR" />
+	    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+	    <result column="money" property="money" jdbcType="DOUBLE" />
+    </resultMap>
+   <select id="selectDtOlServiceForSea"  resultMap="DtOlServiceSeaMap" parameterType="java.util.Map">
+		select cusid,mediatype,money ,sum(sl) as id ,sum(totalseconds) as totalseconds  from dtolservice_c 
+		<where>
+			<if test="cusid != null and cusid != '' " >
+		         cusid = #{cusid,jdbcType=VARCHAR} 
+		    </if>
+			<!-- <if test="clazz != null and clazz != '' " >
+		         and mediatype  = #{clazz,jdbcType=VARCHAR}
+		    </if> -->
+			 <if test="startTime != null and startTime != '' " >
+		          and _date <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+		      	</if>
+		      <if test="endTime != null and endTime != '' " >
+		          and _date <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+		    </if>
+		</where>
+		group by cusid,mediatype,money
+    </select>
+  
+  
+  
+	  		<resultMap id="DtChgOrderSeaMap" type="com.zeng.ocs.po.DtChgOrder" >
+			    <id column="id" property="id" jdbcType="INTEGER" />
+			    <result column="cusid" property="cusid" jdbcType="CHAR" />
+			    <result column="mode" property="mode" jdbcType="VARCHAR" />
+			    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+			    <result column="money" property="money" jdbcType="DOUBLE" />
+		    </resultMap>
+	 	<select id="selectDtChgOrderForSea"  resultMap="DtChgOrderSeaMap" parameterType="java.util.Map">
+			select cusid ,typeid,mode,money,sum(sl) as id   from dtchgorder_c 
+			<where>
+				<if test="cusid != null and cusid != '' " >
+			         cusid = #{cusid,jdbcType=VARCHAR}
+			    </if>
+			    <if test="typeid != null and typeid != '' " >
+			          and typeid = #{typeid,jdbcType=VARCHAR}
+			    </if>
+				 <if test="startTime != null and startTime != '' " >
+		          and accdate <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+		      	</if>
+		      	<if test="endTime != null and endTime != '' " >
+		          and accdate <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+		      	</if>
+			    <!--  <if test="mode != null and mode != '' " >
+			          and mode like concat('%',#{mode,jdbcType=VARCHAR},'%')
+			    </if>	 -->	
+			</where>
+			group by cusid ,typeid,mode,money
+	    </select>
+  
+  
+  
+     <resultMap id="DtMessageSeaMap" type="com.zeng.ocs.po.DtMessageVo" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+	     <result column="money" property="money" jdbcType="DOUBLE" />
+  	</resultMap>
+  <select id="selectDtMessageForSea"  resultMap="DtMessageSeaMap" parameterType="java.util.Map">
+		select cusid,money,sum(sl) as id  from dtmessage_c 
+		<where>
+				<if test="cusid != null and cusid != '' " >
+	         		cusid = #{cusid,jdbcType=VARCHAR}
+	       		</if>
+				  <if test="startTime != null and startTime != '' " >
+		          and updatetime <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+		      	</if>
+		      	<if test="endTime != null and endTime != '' " >
+		          and updatetime <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+		      	</if>
+		</where>
+		group by cusid,money
+  </select>
+  
+  
+  
+  <!-- 3、group by 统计  -->
+  <resultMap id="DtVoiceGroupMap" type="com.zeng.ocs.po.DtVoice" >
+		    <id column="id" property="id" jdbcType="BIGINT" />
+		    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+		    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+		    <result column="ntype" property="ntype"/>
+		    <result column="typeid" property="typeid"/>
+		    <result column="money" property="money" jdbcType="DOUBLE" />
+  </resultMap>
+  <select id="selectDtVoiceForGroup"  resultMap="DtVoiceGroupMap" parameterType="java.util.Map">		
+		select cusid , typeid , ntype , money , sum(sl)  as id ,SUM(totalseconds)  as totalseconds from dtvoice_c
+			<where>
+				<if test="cusid != null and cusid != '' " >
+	         		cusid = #{cusid,jdbcType=VARCHAR}
+	       		</if>
+				  <if test="startTime != null and startTime != '' " >
+		          and _date <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+		      	</if>
+		      	<if test="endTime != null and endTime != '' " >
+		          and _date <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+		      	</if>
+			</where>
+		GROUP BY cusid , typeid , ntype , money	
+  </select>
+  
+  			<resultMap id="DtDtMultiVoiceGroupMap" type="com.zeng.ocs.po.DtMultiVoice" >
+			    <id column="id" property="id" jdbcType="BIGINT" />
+			    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+			    <result column="totalseconds" property="totalseconds"/>
+			    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+			    <result column="money" property="money" jdbcType="DOUBLE" />
+		    </resultMap>
+   <select id="selectDtMultiVoiceForGroup"  resultMap="DtDtMultiVoiceGroupMap" parameterType="java.util.Map">		
+		select cusid , bigtype , ntype , money , sum(sl) as id ,SUM(totalseconds) as totalseconds from dtmultivoice_c
+				<where>
+					<if test="cusid != null and cusid != '' " >
+		         		cusid = #{cusid,jdbcType=VARCHAR}
+		       		</if>
+					  <if test="startTime != null and startTime != '' " >
+			          and _date <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+			      	</if>
+			      	<if test="endTime != null and endTime != '' " >
+			          and _date <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+			      	</if>
+				</where>
+			GROUP BY cusid , bigtype , ntype , money
+  </select>
+  
+   <resultMap id="DtOlServiceGroupMap" type="com.zeng.ocs.po.DtOlService" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+	    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+	    <result column="mediatype" property="mediatype" jdbcType="VARCHAR" />
+	    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+	    <result column="money" property="money" jdbcType="DOUBLE" />
+	    <result column="value" property="value" jdbcType="DOUBLE" />
+    </resultMap>
+  <select id="selectDtOlServiceForGroup"  resultMap="DtOlServiceGroupMap" parameterType="java.util.Map">			
+			select cusid , typeid , mediatype , money ,value, sum(sl) as id, sum(totalseconds) as totalseconds from dtolservice_c
+						<where>
+							<if test="cusid != null and cusid != '' " >
+				         		cusid = #{cusid,jdbcType=VARCHAR}
+				       		</if>
+							  <if test="startTime != null and startTime != '' " >
+					          and _date <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+					      	</if>
+					      	<if test="endTime != null and endTime != '' " >
+					          and _date <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+					      	</if>
+						</where>
+			GROUP BY cusid , typeid , mediatype , money ,value
+  </select>
+  
+  
+  <resultMap id="DtChgOrderGroupMap" type="com.zeng.ocs.po.DtChgOrder" >
+			    <id column="id" property="id" jdbcType="INTEGER" />
+			    <result column="cusid" property="cusid" jdbcType="CHAR" />
+			    <result column="mode" property="mode" jdbcType="VARCHAR" />
+			    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+			    <result column="money" property="money" jdbcType="DOUBLE" />
+	 </resultMap>
+  <select id="selectDtChgOrderForGroup"  resultMap="DtChgOrderGroupMap" parameterType="java.util.Map">				
+			select cusid , typeid, mode ,  money,value , sum(sl) as id from dtchgorder_c
+						<where>
+							<if test="cusid != null and cusid != '' " >
+				         		cusid = #{cusid,jdbcType=VARCHAR}
+				       		</if>
+							  <if test="startTime != null and startTime != '' " >
+					          and accdate <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+					      	</if>
+					      	<if test="endTime != null and endTime != '' " >
+					          and accdate <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+					      	</if>
+						</where>
+			group by cusid , typeid, mode ,  money,value
+  </select>
+  
+  
+       <resultMap id="DtMessageGroupMap" type="com.zeng.ocs.po.DtMessageVo" >
+		     <id column="id" property="id" jdbcType="BIGINT" />
+		     <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+		     <result column="money" property="money" jdbcType="DOUBLE" />
+  		</resultMap>
+  	  <select id="selectDtMessageForGroup"  resultMap="DtMessageGroupMap" parameterType="java.util.Map">		
+			select cusid , money , sum(sl) as id from dtmessage_c
+								<where>
+									<if test="cusid != null and cusid != '' " >
+						         		cusid = #{cusid,jdbcType=VARCHAR}
+						       		</if>
+									  <if test="startTime != null and startTime != '' " >
+							          and updatetime <![CDATA[>= ]]> #{startTime,jdbcType=VARCHAR}
+							      	</if>
+							      	<if test="endTime != null and endTime != '' " >
+							          and updatetime <![CDATA[<= ]]> #{endTime,jdbcType=VARCHAR} 
+							      	</if>
+								</where>
+			GROUP BY cusid , money 
+      </select>
+  	
+  	
+  	<!-- 统计所有公司语音数据  -->
+  	<resultMap id="DtVoiceStaMap" type="com.zeng.ocs.po.DtVoice" >
+		    <id column="id" property="id" jdbcType="BIGINT" />	
+		    <result column="cusid" property="cusid" jdbcType="VARCHAR" />	    
+		    <result column="totalseconds" property="totalseconds" jdbcType="VARCHAR" />
+		    <result column="ntype" property="ntype"/>		   
+		    <result column="money" property="money" jdbcType="DOUBLE" />
+	    </resultMap>
+  	<select id="selectAllDtVoice" resultMap="DtVoiceStaMap" parameterType="java.util.Map" >
+	  	select  cusid,ntype , money , sum(sl) as id ,SUM(totalseconds) as totalseconds from dtvoice_c		
+		<where>								
+									<if test="condition3 != null and condition3 != '' " >
+							          and _date <![CDATA[>= ]]> #{condition3,jdbcType=VARCHAR}
+							      	</if>
+							      	<if test="condition4 != null and condition4 != '' " >
+							          and _date <![CDATA[<= ]]> #{condition4,jdbcType=VARCHAR} 
+							      	</if>
+		</where>	
+		GROUP BY  cusid,ntype , money  	
+  	</select>
+  	<!-- 统计所有公司多媒体语音  -->
+  	<resultMap id="DtDtMultiVoiceStaMap" type="com.zeng.ocs.po.DtMultiVoice" >
+			    <id column="id" property="id" jdbcType="BIGINT" />
+			    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+			    <result column="totalseconds" property="totalseconds"/>
+			    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+			    <result column="money" property="money" jdbcType="DOUBLE" />
+	</resultMap>
+  	<select id="selectAllDtMultiVoice" resultMap="DtDtMultiVoiceStaMap" parameterType="java.util.Map">  	
+		  	select  cusid,ntype , money , sum(sl) as id ,SUM(totalseconds) as totalseconds from dtmultivoice_c
+		<where>								
+									<if test="condition3 != null and condition3 != '' " >
+							          and _date <![CDATA[>= ]]> #{condition3,jdbcType=VARCHAR}
+							      	</if>
+							      	<if test="condition4 != null and condition4 != '' " >
+							          and _date <![CDATA[<= ]]> #{condition4,jdbcType=VARCHAR} 
+							      	</if>
+		</where>	
+			GROUP BY  cusid,ntype , money  	
+  	</select>
+  	<!-- 统计所有公司非语音数据 -->
+  	<resultMap id="DtOlServiceStaMap" type="com.zeng.ocs.po.DtOlService" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+	    <result column="mediatype" property="mediatype" jdbcType="VARCHAR" />
+	    <result column="money" property="money" jdbcType="DOUBLE" />
+	    <result column="value" property="value" jdbcType="DOUBLE" />
+    </resultMap>
+  	<select id="selectAllDtOlService" resultMap="DtOlServiceStaMap" parameterType="java.util.Map">	
+		select  cusid,mediatype , money ,value , sum(sl) as id  from dtolservice_c
+		<where>								
+									<if test="condition3 != null and condition3 != '' " >
+							          and _date <![CDATA[>= ]]> #{condition3,jdbcType=VARCHAR}
+							      	</if>
+							      	<if test="condition4 != null and condition4 != '' " >
+							          and _date <![CDATA[<= ]]> #{condition4,jdbcType=VARCHAR} 
+							      	</if>
+		</where>	
+		GROUP BY   cusid,mediatype , money ,value
+  	</select>
+  	<!-- 统计所有公司补单改单书籍  -->
+  	  <resultMap id="DtChgOrderStaMap" type="com.zeng.ocs.po.DtChgOrder" >
+			    <id column="id" property="id" jdbcType="INTEGER" />
+			    <result column="cusid" property="cusid" jdbcType="CHAR" />
+			    <result column="mode" property="mode" jdbcType="VARCHAR" />			    
+			    <result column="money" property="money" jdbcType="DOUBLE" />
+			    <result column="value" property="value" jdbcType="DOUBLE" />
+	 </resultMap>
+  	<select id="selectAllDtChgOrder" resultMap="DtChgOrderStaMap" parameterType="java.util.Map">		
+		select cusid , mode ,  money,value , sum(sl) as id  from dtchgorder_c
+		<where>								
+									<if test="condition3 != null and condition3 != '' " >
+							          and accdate <![CDATA[>= ]]> #{condition3,jdbcType=VARCHAR}
+							      	</if>
+							      	<if test="condition4 != null and condition4 != '' " >
+							          and accdate <![CDATA[<= ]]> #{condition4,jdbcType=VARCHAR} 
+							      	</if>
+		</where>			
+		group by cusid , mode ,  money,value
+  	</select>
+  	<!-- 统计所有公司短信 -->
+  	<resultMap id="DtMessageStaMap" type="com.zeng.ocs.po.DtMessageVo" >
+	    <id column="id" property="id" jdbcType="BIGINT" />
+	    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+	     <result column="money" property="money" jdbcType="DOUBLE" />
+  	</resultMap>
+  	<select id="selectAllDtMessage" resultMap="DtMessageStaMap" parameterType="java.util.Map">		
+		select cusid , money , sum(sl) as id from dtmessage_c
+		<where>								
+									<if test="condition3 != null and condition3 != '' " >
+							          and updatetime <![CDATA[>= ]]> #{condition3,jdbcType=VARCHAR}
+							      	</if>
+							      	<if test="condition4 != null and condition4 != '' " >
+							          and updatetime <![CDATA[<= ]]> #{condition4,jdbcType=VARCHAR} 
+							      	</if>
+		</where>		
+		GROUP BY cusid , money 
+  	</select>
+  	
+  	<resultMap id="MoneyStandardStaMap" type="com.zeng.ocs.po.MoneyStandard" >
+	    <id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+	    <result column="mtype" property="mType" jdbcType="VARCHAR" />
+	    <result column="iotype" property="ioType" jdbcType="VARCHAR" />
+	    <result column="times" property="times" jdbcType="VARCHAR" />
+	    <result column="price" property="price" jdbcType="VARCHAR" />
+	    <result column="number" property="number" jdbcType="VARCHAR" />
+	     <result column="value" property="value" jdbcType="VARCHAR" />
+	    <result column="class" property="clazz" jdbcType="VARCHAR" />
+    </resultMap>
+  	<select id="selectAllMoneyStandard" resultMap="MoneyStandardStaMap" parameterType="java.util.Map">		
+		select * from custiming		
+  	</select>
+  	
+</mapper>

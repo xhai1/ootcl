@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.SmsPortDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.SmsPort" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="port" property="port" jdbcType="VARCHAR" />
+    <result column="purpose" property="purpose" jdbcType="VARCHAR" />
+    <result column="caroprator" property="caroprator" jdbcType="INTEGER" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cusid, port, purpose,caroprator, updatetime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from smsport
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from smsport
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zeng.ocs.po.SmsPort" >
+    insert into smsport (id, cusid, port, 
+      purpose, updatetime)
+    values (#{id,jdbcType=BIGINT}, #{cusid,jdbcType=VARCHAR}, #{port,jdbcType=VARCHAR}, 
+      #{purpose,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zeng.ocs.po.SmsPort" >
+    insert into smsport
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cusid != null" >
+        cusid,
+      </if>
+      <if test="port != null" >
+        port,
+      </if>
+      <if test="purpose != null" >
+        purpose,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cusid != null" >
+        #{cusid,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=VARCHAR},
+      </if>
+      <if test="purpose != null" >
+        #{purpose,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zeng.ocs.po.SmsPort" >
+    update smsport
+    <set >
+      <if test="cusid != null" >
+        cusid = #{cusid,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        port = #{port,jdbcType=VARCHAR},
+      </if>
+      <if test="purpose != null" >
+        purpose = #{purpose,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zeng.ocs.po.SmsPort" >
+    update smsport
+    set cusid = #{cusid,jdbcType=VARCHAR},
+      port = #{port,jdbcType=VARCHAR},
+      purpose = #{purpose,jdbcType=VARCHAR},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+   
+  
+
+  
+  <select id="selectCountByCondition" resultType="java.lang.Long" parameterType="com.zeng.ocs.util.PaginationUtil" >
+    select 
+    	 count(id)
+    from 
+    
+    	(select cusid from smsport
+    		<where>
+	    		<if test="condition1 != null and condition1!=''">
+	    			 port like concat('%',#{condition1,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition3 != null and condition3!=''">
+	    			 and caroprator like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+			    </if>
+    		 </where>
+    	)  A
+    
+            join customer on  customer.cusid = A.cusid    
+	    	<if test="condition2 != null and condition2 != ''">
+	    		and cusname like  concat('%',#{condition2,jdbcType=VARCHAR},'%') 
+	    	</if>    	 
+  </select>
+  
+  
+    <!-- 条件查询 -->
+  <select id="selectSmsPortByCondition" resultMap="BaseResultMap" parameterType="com.zeng.ocs.util.PaginationUtil" >
+    select 
+    	 A.id as id, A.cusid as cusid,cusname , port, purpose,caroprator, updatetime
+    from 
+    	(select * from smsport
+    		<where>
+	    		<if test="condition1 != null and condition1!=''">
+	    			 port like concat('%',#{condition1,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition2 != null and condition2!=''">
+	    			 and cusid = #{condition2,jdbcType=VARCHAR}
+			    </if>
+			    <if test="condition3 != null and condition3!=''">
+	    			 and caroprator like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+			    </if>
+    		 </where>
+			 order by id desc 
+    		 <if test="end != null and end!=0">
+	    			 limit #{begin,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
+			 </if>
+    	 ) A   
+        join customer on A.cusid = customer.cusid  
+        order by A.id desc 
+    	<!-- <if test="condition2 != null and condition2 != ''">
+    		and cusname like  concat('%',#{condition2,jdbcType=VARCHAR},'%') 
+    	</if> -->
+  </select>
+  
+  <!-- 添加 短信端口归属-->
+  <select id="insertSelectSmsPort" resultType="java.lang.String" parameterType="com.zeng.ocs.po.SmsPort">
+  	   select cusid from customer where cusname like concat('%',#{cusname,jdbcType=VARCHAR},'%')
+  </select>
+  <insert id="insertSmsPort" parameterType="com.zeng.ocs.po.SmsPort">
+  	insert into 
+  				smsport
+  	
+  	
+  	<trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cusid != null" >
+        cusid,
+      </if>
+      <if test="port != null" >
+        port,
+      </if>
+      <if test="purpose != null" >
+        purpose,
+      </if>
+      updatetime,
+      <if test="caroprator != null" >
+        caroprator
+      </if>     
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >      
+      <if test="cusid != null" >
+        #{cusid,jdbcType=CHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=VARCHAR},
+      </if>
+      <if test="purpose != null" >
+        #{purpose,jdbcType=VARCHAR},
+      </if>
+     	 now(),
+      <if test="caroprator != null" >
+        #{caroprator,jdbcType=VARCHAR}
+      </if>      
+    </trim>
+  </insert>
+  
+  <!-- 更新 短信端口归属-->  
+ <!--  <update id="updateCustomer"  parameterType="com.zeng.ocs.po.SmsPort">
+  	   update customer
+  	    <set >
+	      <if test="cusname != null and cusname != ''" >
+	       cusname = #{cusname,jdbcType=VARCHAR} 
+	      </if>
+   	   </set>
+  	   where cusid = #{cusid,jdbcType=VARCHAR}
+  </update> -->
+  
+  <select id="selectCusId"  resultType="java.lang.String" parameterType="com.zeng.ocs.po.SmsPort">
+  		select cusid from customer where cusname like #{cusname,jdbcType=VARCHAR} limit 1
+  </select>
+  
+    <update id="updateSmsPort"  parameterType="com.zeng.ocs.po.SmsPort">
+  	   update smsport
+  	   <set >
+  	      <if test="cusid != null and cusid != ''" >
+	       cusid = #{cusid,jdbcType=VARCHAR} ,
+	      </if>
+	      <if test="port != null and port != ''" >
+	       port = #{port,jdbcType=VARCHAR} ,
+	      </if>
+	      <if test="purpose != null and purpose != ''" >
+	       purpose = #{purpose,jdbcType=VARCHAR} ,
+	      </if>
+	      <if test="caroprator != null and caroprator != ''" >
+	       caroprator = #{caroprator,jdbcType=INTEGER} ,
+	      </if>
+	      updatetime=now()
+   	  </set>
+  	   where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="selectSmsPortForExport" resultType="com.zeng.ocs.po.SmsPort" parameterType="com.zeng.ocs.po.SmsPort">
+  	   select A.port , A.purpose , A.caroprator ,cusname from 
+  	    
+  	    (select cusid,port,purpose,caroprator from smsport) A
+  	    
+  	   left join customer using(cusid) 
+  </select>
+  
+  
+  <select id="selectSmsPortForImport" resultType="com.zeng.ocs.po.SmsPort" parameterType="com.zeng.ocs.po.SmsPort">
+  	   select A.id as id ,A.port as port , A.purpose as purpose , A.caroprator as caroprator ,cusname from 
+  	    
+  	    (select id,cusid,port,purpose,caroprator from smsport
+  	    	<if test="port != null and port != ''" >
+	       		where port like #{port,jdbcType=VARCHAR}
+	        </if>
+  	    ) A
+  	    
+  	   left join customer using(cusid) 
+  </select>
+  
+  
+    <update id="updateSmsPortForImport"  parameterType="com.zeng.ocs.po.SmsPort">
+  	   update smsport
+  	   <set >
+  	   	  <if test="cusid != null and cusid != ''" >
+	     	  cusid = #{cusid,jdbcType=VARCHAR} ,
+	      </if>
+	      <if test="port != null and port != ''" >
+	       		port = #{port,jdbcType=VARCHAR} ,
+	      </if>
+	      <if test="purpose != null and purpose != ''" >
+	       purpose = #{purpose,jdbcType=VARCHAR} ,
+	      </if>
+	      <if test="caroprator != null and caroprator != ''" >
+	       caroprator = #{caroprator,jdbcType=INTEGER} ,
+	      </if>
+   	  </set>
+  	   where id = #{id,jdbcType=INTEGER}
+   </update>
+   
+   
+   <select id="selectCusidByCusName" resultType="java.lang.String" parameterType="com.zeng.ocs.po.SmsPort">
+   		select cusid from customer where cusname like concat('%',#{cusname,jdbcType=VARCHAR},'%') limit 1
+   </select>
+<!--    <insert id="batchInsert" parameterType="java.util.List">
+   	
+   	insert into smsport(cusid,port,purpose,code,updatetime)
+   		 values
+	   	<foreach collection="list" item="item" index="index" separator=",">
+	   		(
+	   			#{item.cusid,jdbcType=VARCHAR},#{item.port,jdbcType=VARCHAR},#{item.purpose,jdbcType=VARCHAR},#{item.code,jdbcType=VARCHAR},now()
+	   		)
+	   	</foreach>
+   </insert> -->
+   
+    <insert id="insertSelectiveMulti981" parameterType="com.zeng.ocs.po.SmsPort">
+    insert into smsport
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cusid != null">
+        cusid,
+      </if>
+      <if test="port != null">
+        port,
+      </if>
+      <if test="purpose != null">
+        purpose,
+      </if>        
+      <if test="caroprator != null">
+        caroprator,
+      </if>  
+        updatetime  
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    
+      <if test="cusid != null">
+        #{cusid,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null">
+       #{port,jdbcType=VARCHAR},
+      </if>
+      <if test="purpose != null">
+        #{purpose,jdbcType=VARCHAR},
+      </if>
+      <if test="caroprator != null">
+         #{caroprator,jdbcType=VARCHAR},
+      </if>     
+        now()     
+    </trim>
+    </insert>
+   
+   
+   
+   
+   <delete id="deleteSmsPort" parameterType="com.zeng.ocs.po.SmsPort">
+   		delete from smsport where id = #{id,jdbcType=INTEGER}
+   </delete>
+   
+</mapper>

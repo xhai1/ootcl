@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.UserCustomerDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.UserVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="truename" property="truename" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="isroot" property="isroot" jdbcType="INTEGER" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="CustomerResultMap" type="com.zeng.ocs.po.CustomerVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="cusname" property="cusname" jdbcType="INTEGER" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+  	user.id as id,user.cusid as cusid,user.username as username,user.password as password,user.truename as truename,user.title as title,user.telephone as telephone,user.email as email,user.isroot as isroot,
+  	customer.cusname as cusname 
+  </sql>
+  
+  <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.UserVo">
+    	select count(*) from user u left join customer c on u.cusid=c.cusid
+    	<where>
+    		<if test="username != null and username != ''">
+    			username like concat('%',#{username},'%')
+    		</if>
+    	</where>
+  </select>
+  
+   <select id="findAllUser" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.UserVo">
+	    select
+	     <include refid="Base_Column_List"/>
+	      from user left join customer on user.cusid=customer.cusid
+	      <where>
+			<if test="username != null and username != ''">
+				username like concat('%',#{username},'%')
+			</if>
+			<if test="truename != null and truename != ''">
+				and truename like concat('%',#{truename},'%')
+			</if>
+	      </where>
+	</select>
+	<select id="getUserByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List"/>
+		from user left join customer on user.cusid=customer.cusid
+		<where>
+			username=#{username}
+		</where>
+	</select>
+	
+	<select id="getUserById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List"/>
+		from user left join customer on user.cusid=customer.cusid
+		<where>
+			user.id=#{id}
+		</where>
+	</select>
+	
+	<update id="updateUser" parameterType="com.zeng.ocs.po.UserVo">
+		update user
+		<set>
+			<if test="cusid != null and cusid != ''">
+				cusid=#{cusid},
+			</if>
+			username=#{username},password=#{password},truename=#{truename},title=#{title},telephone=#{telephone},email=#{email},isroot=0
+			<where>
+				id=#{id}
+			</where>
+		</set>
+	</update>
+	<insert id="addUser" parameterType="com.zeng.ocs.po.UserVo">
+		insert into user
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="cusid != null and cusid != ''">
+	      		cusid,
+	      	</if>
+	      	<if test="username != null and username != ''">
+	      		username,
+	      	</if>
+	      	<if test="password != null and password != ''">
+	      		password,
+	      	</if>
+	      	<if test="truename != null and truename != ''">
+	      		truename,
+	      	</if>
+	      	<if test="title != null and title != ''">
+	      		title,
+	      	</if>
+	      	<if test="telephone != null and telephone != ''">
+	      		telephone,
+	      	</if>
+			<if test="email != null and email != ''">
+	      		email,
+	      	</if>
+	      	
+	      		isroot
+		</trim> 
+		
+      	values
+      	<trim prefix="(" suffix=")" suffixOverrides="," >
+	      	<if test="cusid != null and cusid != ''">
+	      		#{cusid},
+	      	</if>
+	      	<if test="username != null and username != ''">
+	      		#{username},
+	      	</if>
+	      	<if test="password != null and password != ''">
+	      		#{password},
+	      	</if>
+	      	<if test="truename != null and truename != ''">
+	      		#{truename},
+	      	</if>
+	      	<if test="title != null and title != ''">
+	      		#{title},
+	      	</if>
+	      	<if test="telephone != null and telephone != ''">
+	      		#{telephone},
+	      	</if>
+			<if test="email != null and email != ''">
+	      		#{email},
+	      	</if>
+	      	<choose>
+	      		<when test="cusid != null and cusid != ''">
+	      			0
+	      		</when>
+	      		<otherwise>
+	      			1
+	      		</otherwise>
+	      	</choose>
+      	</trim> 
+	</insert>
+	
+	<delete id="deleteUsers"  parameterType="java.util.List" >
+	  	delete  from user    
+	    where id in (
+	 	 <foreach collection="list" index="index" item="item" separator=",">
+			#{item,jdbcType=INTEGER}  	
+	  	 </foreach>
+	  	)
+  </delete>
+  
+  <select id="findAllCustomer" resultMap="CustomerResultMap">
+  	select * from customer
+  </select>
+  
+  <select id="login" parameterType="com.zeng.ocs.po.User" resultType="com.zeng.ocs.po.User">
+  	select * from user where username=#{username} and password=#{password} limit 1
+  </select>
+  
+  
+  
+  <update id="updatePermissionForUser" parameterType="com.zeng.ocs.po.UserVo">
+ 	 update user
+ 	 <set>
+ 	 	isroot=#{isroot}
+ 	 	<where>
+ 	 		id=#{id}
+ 	 	</where>
+ 	 </set>
+  </update>
+</mapper>

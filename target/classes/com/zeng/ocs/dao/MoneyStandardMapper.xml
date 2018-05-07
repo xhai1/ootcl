@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.MoneyStandardDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.MoneyStandard" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+    <result column="mtype" property="mType" jdbcType="VARCHAR" />
+    <result column="iotype" property="ioType" jdbcType="VARCHAR" />
+    <result column="times" property="times" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+     <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="class" property="clazz" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cusid, mtype,iotype,times,price,number,value,class
+  </sql>
+  
+  
+  <select id="showCusStardardByCustomer" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.Customer">
+  			select 
+  				<include refid="Base_Column_List"/>
+  			from
+  				custiming
+  			where cusid = #{cusid,jdbcType=VARCHAR}
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.zeng.ocs.po.MoneyStandard" >
+    update custiming
+    <set >
+      <if test="cusId != null" >
+        cusid = #{cusId,jdbcType=CHAR},
+      </if>
+      <if test="mType != null" >
+        mtype = #{mType,jdbcType=INTEGER},
+      </if>
+      <if test="ioType != null" >
+        iotype = #{ioType,jdbcType=VARCHAR},
+      </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="value != null" >
+        value = #{value,jdbcType=DECIMAL},
+      </if>
+      <if test="clazz != null" >
+        class = #{clazz,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+   <insert id="insertSelective" parameterType="com.zeng.ocs.po.MoneyStandard" >
+    insert into custiming
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cusId != null" >
+        cusid,
+      </if>
+      <if test="mType != null" >
+        mtype,
+      </if>
+      <if test="ioType != null" >
+        iotype,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+      <if test="clazz != null" >
+        class,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cusId != null" >
+        #{cusId,jdbcType=CHAR},
+      </if>
+      <if test="mType != null" >
+        #{mType,jdbcType=INTEGER},
+      </if>
+      <if test="ioType != null" >
+        #{ioType,jdbcType=VARCHAR},
+      </if>
+      <if test="times != null" >
+        #{times,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=DECIMAL},
+      </if>
+      <if test="clazz != null" >
+        #{clazz,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+   <select id="firstSelectByCusid" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.MoneyStandard">
+  			select 
+  				<include refid="Base_Column_List"/>
+  			from
+  				custiming
+  			where cusid like concat('%',#{cusId,jdbcType=VARCHAR},'%') 
+  </select>
+ 
+  <select id="selectCustomerForImport" resultMap="CustomerMap" parameterType="java.lang.String">
+  			select 
+  				*
+  			from
+  				customer
+  			where cusname =  #{cusName,jdbcType=VARCHAR} limit 1
+  </select>
+  <resultMap id="CustomerMap" type="com.zeng.ocs.po.Customer" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+    <select id="selectMoneyStandarForImport" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.Customer">
+  			select 
+  				<include refid="Base_Column_List"/>
+  			from
+  				custiming
+  			where cusid like concat('%',#{cusid,jdbcType=VARCHAR},'%') limit 1
+  </select>
+  
+      <select id="selectAllMoneyStandard" resultMap="BaseResultMap">
+  			select 
+  				<include refid="Base_Column_List"/>
+  			from
+  				custiming
+  			
+ 	 </select>
+  
+  
+  </mapper>

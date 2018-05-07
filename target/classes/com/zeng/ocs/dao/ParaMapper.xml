@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.ParaDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.Para" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pkey" property="pkey" jdbcType="VARCHAR" />
+    <result column="pvalue" property="pvalue" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pkey, pvalue
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from para
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from para
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zeng.ocs.po.Para" >
+    insert into para (id, pkey, pvalue
+      )
+    values (#{id,jdbcType=INTEGER}, #{pkey,jdbcType=VARCHAR}, #{pvalue,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zeng.ocs.po.Para" >
+    insert into para
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pkey != null" >
+        pkey,
+      </if>
+      <if test="pvalue != null" >
+        pvalue,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pkey != null" >
+        #{pkey,jdbcType=VARCHAR},
+      </if>
+      <if test="pvalue != null" >
+        #{pvalue,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zeng.ocs.po.Para" >
+    update para
+    <set >
+      <if test="pkey != null" >
+        pkey = #{pkey,jdbcType=VARCHAR},
+      </if>
+      <if test="pvalue != null" >
+        pvalue = #{pvalue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zeng.ocs.po.Para" >
+    update para
+    set pkey = #{pkey,jdbcType=VARCHAR},
+      pvalue = #{pvalue,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!--  -->
+  
+   <select id="selectParaAll" resultMap="BaseResultMap" >
+    select
+     <include refid="Base_Column_List" />
+      from para
+  </select>
+
+
+   <select id="selectByPkey" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+     <include refid="Base_Column_List" />
+      from para  where pkey like concat('%', #{pkey,jdbcType=VARCHAR},'%')
+  </select>    
+  
+</mapper>

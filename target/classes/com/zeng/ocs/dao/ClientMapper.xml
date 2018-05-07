@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.ClientDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.CustomerVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  </resultMap>
+ <select id="findCount" resultType="java.lang.Integer">
+   	select count(*) from customer
+ </select>
+ 
+  <select id="findAllCustomer" resultMap="BaseResultMap">
+	    select * from customer order by id desc
+	</select>  
+	
+	
+	
+	<select id="selectForSearch" resultMap="BaseResultMap" parameterType="java.lang.String">
+	    select * from customer
+	    <if test="_parameter != null and _parameter !=''">
+	    	where cusname like concat('%',#{_parameter},'%')
+	    </if>
+	</select> 
+  
+  <select id="findCustomerById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		select * from customer
+  		<where>
+  			id=#{id}
+  		</where>
+  </select>
+  
+  <update id="updateCustomer" parameterType="com.zeng.ocs.po.CustomerVo">
+  	update customer
+		<set>
+			cusid=#{cusid},cusname=#{cusname},telephone=#{telephone}
+			<if test="lastmodify != null and lastmodify != ''">
+				,lastmodify=#{lastmodify}
+			</if>
+			<where>
+				id=#{id}
+			</where>
+		</set>
+  </update>
+  
+  <delete id="deleteCustomerById" parameterType="java.lang.Integer">
+  	delete  from customer    
+	    where id=#{id}
+  </delete>
+  
+  
+  <delete id="deleteCustomers"  parameterType="java.util.List" >
+	  	delete  from customer    
+	    where id in (
+	 	 <foreach collection="list" index="index" item="item" separator=",">
+			#{item,jdbcType=INTEGER}  	
+	  	 </foreach>
+	  	)
+  </delete>
+  
+  <insert id="addCustomer" parameterType="com.zeng.ocs.po.CustomerVo">
+  	insert into customer
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="cusid != null and cusid != ''">
+	      		cusid,
+	      	</if>
+	      	<if test="cusname != null and cusname != ''">
+	      		cusname,
+	      	</if>
+	      	<if test="telephone != null and telephone != ''">
+	      		telephone,
+	      	</if>
+		</trim> 
+		
+      	values
+      	<trim prefix="(" suffix=")" suffixOverrides="," >
+	      	<if test="cusid != null and cusid != ''">
+	      		#{cusid},
+	      	</if>
+	      	<if test="cusname != null and cusname != ''">
+	      		#{cusname},
+	      	</if>
+	      	<if test="telephone != null and telephone != ''">
+	      		#{telephone},
+	      	</if>
+      	</trim> 
+  </insert>
+  
+  <select id="findCustomerByCusid" resultMap="BaseResultMap" parameterType="java.lang.String">
+	   	select * from customer
+	   	<where>
+	   		cusid=#{cusid}
+	   	</where>
+ </select>
+ 
+ 
+ 
+   <select id="findCustomerByCusName" resultMap="BaseResultMap" parameterType="java.lang.String">
+	   	select * from customer
+	   	<where>
+	   		cusname=#{cusname}
+	   	</where>
+ 	</select>
+</mapper>

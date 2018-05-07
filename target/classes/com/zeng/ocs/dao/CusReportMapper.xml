@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.CusReportDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.CusReportVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="month" property="month" jdbcType="VARCHAR" />
+    <result column="incount" property="incount" jdbcType="INTEGER" />
+    <result column="inseconds" property="inseconds" jdbcType="INTEGER" />
+    <result column="outcount" property="outcount" jdbcType="INTEGER" />
+    <result column="outsenconds" property="outsenconds" jdbcType="INTEGER" />
+    <result column="msgcount" property="msgcount" jdbcType="INTEGER" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="invalue" property="invalue" />
+    <result column="outvalue" property="outvalue" />
+    <result column="msgvalue" property="msgvalue" />
+    <result column="totalin" property="totalin" />
+    <result column="totalout" property="totalout" />
+    <result column="inhour" property="inhour" />
+    <result column="outhour" property="outhour" />
+    <result column="endflag" property="endflag" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  	c.id as id,c.cusid as cusid,c.month as month,c.incount as incount,c.inseconds as inseconds,c.outcount as outcount,c.outsenconds as outsenconds,c.msgcount as msgcount,
+  	cast(c.invalue as decimal(18,2)) as invalue,cast(c.outvalue as decimal(18,2)) as outvalue,cast(c.msgvalue as decimal(18,2)) as msgvalue,d.cusname as cusname,
+	cast(c.inseconds/60 as decimal(18,2)) as inhour,cast(c.outsenconds/60 as decimal(18,2)) as outhour,cast(c.inseconds/60*c.invalue as decimal(18,2)) as totalin,cast(c.outsenconds/60*c.outvalue as decimal(18,2)) as totalout,c.endflag as endflag		
+  </sql>
+  
+  <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.CusReportVo">
+    	select count(*) from cusreport c,customer d
+    	<where>
+    		c.cusid=d.cusid
+    		<if test="endflag != null and endflag !=''">
+	      		and c.endflag=#{endflag}
+	      	</if>
+    		<if test="cusid != null and cusid !=''">
+	      		and c.cusid=#{cusid}
+	      	</if>
+    		<if test="id != null and id !=''">
+	      		and c.id=#{id}
+	      	</if>
+    		<if test="cusname != null and cusname !=''">
+	      		and cusname like concat('%',#{cusname},'%')
+	      	</if>
+    		<if test="begintime != null and begintime!=''">
+	      		and month>=#{begintime}
+	      	</if>
+	      	<if test="endtime != null and endtime!=''">
+	      		<![CDATA[ and month<=#{endtime}  ]]>
+	      	</if>
+    	</where>
+  </select>
+  
+   <select id="findAllMonthReport" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.CusReportVo">
+	    select
+	    <include refid="Base_Column_List"/>
+	    from cusreport c,customer d
+	    <where>
+	    	c.cusid=d.cusid
+	    	<if test="endflag != null and endflag !=''">
+	      		and c.endflag=#{endflag}
+	      	</if>
+	    	<if test="cusid != null and cusid !=''">
+	      		and c.cusid=#{cusid}
+	      	</if>
+	    	<if test="id != null and id !=''">
+	      		and c.id=#{id}
+	      	</if>
+	    	<if test="cusname != null and cusname !=''">
+	      		and cusname like concat('%',#{cusname},'%')
+	      	</if>
+	    	<if test="begintime != null and begintime!=''">
+	      		and month>=#{begintime}
+	      	</if>
+	      	<if test="endtime != null and endtime!=''">
+	      		<![CDATA[ and month<=#{endtime}  ]]>
+	      	</if>
+	    </where>
+	    order by c.id desc
+	</select>
+	
+	<!-- <select id="findMsgPrice" parameterType="java.lang.String" resultType="java.lang.Double">
+		select c.value from custiming c 
+		<where>
+			c.mtype=2
+			<if test="_parameter!=null">
+				and c.cusid=#{cusid} 
+			</if>
+		</where>
+	</select> -->
+	
+	<select id="findMonthReportByIds" parameterType="java.util.List" resultMap="BaseResultMap">
+		select
+	    <include refid="Base_Column_List"/>
+	    from cusreport c,customer d
+	    <where>
+	    	c.cusid=d.cusid
+    		and c.id in(
+    			<foreach collection="list" index="index" item="item" separator=",">
+					#{item}  	
+			  	</foreach>
+    		)
+	    </where>
+	</select>
+	
+	<select id="accountMonthReport" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+	    <include refid="Base_Column_List"/>
+	    from cusreport c,customer d
+	    <where>
+	    	c.cusid=d.cusid
+	    	<if test="_parameter != null and _parameter !=''">
+	    		and c.id=#{id}
+	    	</if>
+	    </where>
+	</select>
+	<update id="updateCusReport" parameterType="com.zeng.ocs.po.CusReportVo">
+		update cusreport
+		<set>
+			<if test="endflag != null and endflag != ''">
+				endflag=#{endflag}
+			</if>
+			<where>
+				id=#{id}
+			</where>
+		</set>
+	</update>
+</mapper>

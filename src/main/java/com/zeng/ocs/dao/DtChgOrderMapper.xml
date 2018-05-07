@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.DtChgOrderDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.DtChgOrderVo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="accdate" property="accdate" jdbcType="VARCHAR" />
+    <result column="mode" property="mode" jdbcType="VARCHAR" />
+    <result column="businesstype" property="businesstype" jdbcType="VARCHAR" />
+    <result column="acceptid" property="acceptid" jdbcType="VARCHAR" />
+    <result column="caseorder" property="caseorder" jdbcType="VARCHAR" />
+    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    <result column="dttype" property="dttype" jdbcType="VARCHAR" />
+    <result column="typedemand" property="typedemand" jdbcType="VARCHAR" />
+    <result column="dtdemand" property="dtdemand" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusname" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="tmonth" property="tmonth" jdbcType="VARCHAR" />
+    <result column="accdatetime" property="acc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+  	dtchgorder.id as id,dtchgorder.cusid as cusid,left(dtchgorder.accdate,7) as tmonth,dtchgorder.accdate as accdate,dtchgorder.accdatetime as acc,dtchgorder.mode as mode,dtchgorder.businesstype as businesstype,
+  	dtchgorder.acceptid as acceptid,dtchgorder.caseorder as caseorder,dtchgorder.typeid as typeid,dtchgorder.dttype as dttype,dtchgorder.typedemand as typedemand,
+  	dtchgorder.dtdemand as dtdemand,customer.cusname as cusname,custype.type as type
+  </sql>
+  
+    <select id="findCount" resultType="java.lang.Integer" parameterType="com.zeng.ocs.po.DtChgOrderVo">
+    
+    	select ifnull(sum(sl),0) from dtchgorder_c  	    		
+		    				<where>
+		    							mode=#{mode}
+				    					<if test="cusid != null and cusid !=''">
+								      		and cusid=#{cusid}
+								      	</if>		
+								      	<if test="begintime != null and begintime!=''">
+								      		and accdate  <![CDATA[ >=  ]]> #{begintime}
+								      	</if>
+								      	<if test="endtime != null and endtime!=''">
+								      		<![CDATA[ and accdate <= #{endtime}  ]]>
+								      	</if>
+								      	<if test="typeid != null and typeid !=''">
+								      		and typeid = #{typeid}
+								      	</if>
+		    				</where> 
+    
+	    <!-- <choose>
+	    	<when test="( cusid != null or begintime != null  or endtime != null or typeid != null) or (    cusid !='' or begintime !='' or endtime !='' or typeid !='') ">
+	     	
+		     		select ifnull(sum(sl),0) from dtchgorder_c  	    		
+		    				<where>
+		    							mode=#{mode}
+				    					<if test="cusid != null and cusid !=''">
+								      		and cusid=#{cusid}
+								      	</if>		
+								      	<if test="begintime != null and begintime!=''">
+								      		and accdate  <![CDATA[ >=  ]]> #{begintime}
+								      	</if>
+								      	<if test="endtime != null and endtime!=''">
+								      		<![CDATA[ and accdate <= #{endtime}  ]]>
+								      	</if>
+								      	<if test="typeid != null and typeid !=''">
+								      		and typeid = #{typeid}
+								      	</if>
+		    				</where> 
+	     	
+	     	</when>
+	    	<otherwise>	    		
+	    			select count(*) from dtchgorder 			    				
+			    				<where>  					
+			    					  	mode=#{mode}
+				    					<if test="cusid != null and cusid !=''">
+								      		and cusid=#{cusid}
+								      	</if>		
+								      	<if test="begintime != null and begintime!=''">
+								      		and accdate  <![CDATA[ >=  ]]> #{begintime}
+								      	</if>
+								      	<if test="endtime != null and endtime!=''">
+								      		<![CDATA[ and accdate <= #{endtime}  ]]>
+								      	</if>
+								      	<if test="typeid != null and typeid !=''">
+								      		and typeid = #{typeid}
+								      	</if>
+							      </where>  
+	    		
+	    	</otherwise>
+	    </choose> -->
+	    
+  </select>
+  
+   <select id="findAllDtChgOrder" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.DtChgOrderVo">
+	    select
+	     <include refid="Base_Column_List"/>
+	      from (select * from dtchgorder 
+			<where>
+				dtchgorder.mode=#{mode} 
+				<if test="cusid != null and cusid !=''">
+		      		and dtchgorder.cusid=#{cusid}
+		      	</if>		      	
+		      	<if test="begintime != null and begintime!=''">
+		      		and accdate>=#{begintime}
+		      	</if>
+		      	<if test="endtime != null and endtime!=''">
+		      		<![CDATA[ and accdate<=#{endtime}  ]]>
+		      	</if>
+		      	<if test="typeid != null and typeid !=''">
+		      		and typeid = #{typeid}
+		      	</if>		      	
+			</where>
+			 limit #{begin},#{limit}) as dtchgorder  join customer
+	        on
+	      	dtchgorder.cusid=customer.cusid 
+	      	 join custype on
+	        dtchgorder.cusid=custype.cusid	and dtchgorder.typeid=custype.typeid
+	      	
+	      
+	      order by dtchgorder.id 
+	</select>
+</mapper>

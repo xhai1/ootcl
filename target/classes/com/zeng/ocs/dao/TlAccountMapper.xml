@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.TlAccountDao" >
+  
+  
+  <resultMap id="BaseResultDtVoiceMap" type="com.zeng.ocs.po.DtVoiceVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="time" property="date" jdbcType="VARCHAR" />
+    <result column="totalseconds" property="totalseconds" jdbcType="DOUBLE" />
+  </resultMap>
+  <select id="selectTlAccountDtVoice" resultMap="BaseResultDtVoiceMap" parameterType="com.zeng.ocs.util.PaginationUtil">
+  	select cusid,ntype,money,left(_date,7) as time ,sum(totalseconds) as totalseconds,sum(sl) as id 
+  	
+  	from dtvoice_c 
+  	
+  	<where>
+	  	<if test="condition1 != null and condition1 != ''">
+		  		cusid = #{condition1}
+	  	</if>
+		<if test="condition2 != null and condition2 != ''">
+			and left(_date,7) <![CDATA[>= ]]> #{condition2} 
+		</if>
+		<if test="condition3 != null and condition3 != ''">
+			and left(_date,7) <![CDATA[<= ]]>   #{condition3}
+		</if>
+		
+	</where>
+	group by  cusid,ntype,money,time
+  
+  </select>
+  
+  <resultMap id="BaseResultDtMultiVoiceMap" type="com.zeng.ocs.po.DtMultiVoiceVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="ntype" property="ntype" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="time" property="date" jdbcType="VARCHAR" />
+    <result column="totalseconds" property="totalseconds" jdbcType="DOUBLE" />
+  </resultMap>
+  <select id="selectTlAccountDtMultiVoice" resultMap="BaseResultDtMultiVoiceMap" parameterType="com.zeng.ocs.util.PaginationUtil">
+  	select cusid,ntype,money ,left(_date,7) as time,sum(totalseconds) as totalseconds,sum(sl) as id 
+  	
+  	from dtmultivoice_c 
+  	
+  	<where>
+	  	<if test="condition1 != null and condition1 != ''">
+		  		cusid = #{condition1}
+	  	</if>
+		<if test="condition2 != null and condition2 != '' ">
+			and left(_date,7) <![CDATA[>= ]]> #{condition2} 
+		</if>
+		<if test=" condition3 != null and condition3 != ''">
+			and left(_date,7) <![CDATA[<= ]]>   #{condition3}
+		</if>
+		
+	</where>	
+	group by  cusid,ntype,money,time
+  
+  </select>
+  
+  <resultMap id="BaseResultDtOlserviceMap" type="com.zeng.ocs.po.DtOlServiceVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="mediatype" property="mediatype" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="value" property="value" jdbcType="DOUBLE" />
+    <result column="time" property="date" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectTlAccountDtOlservice" resultMap="BaseResultDtOlserviceMap" parameterType="com.zeng.ocs.util.PaginationUtil">
+  	select cusid,mediatype,money ,value,left(_date,7) as time,sum(sl) as id 
+  	
+  	from dtolservice_c 
+  	
+  	<where>
+	  	<if test="condition1 != null and condition1 != ''">
+		  		cusid = #{condition1}
+	  	</if>
+		<if test="condition2 != null and condition2 != ''">
+			and left(_date,7) <![CDATA[>= ]]> #{condition2} 
+		</if>
+		<if test="condition3 != null and condition3 != ''">
+			and left(_date,7) <![CDATA[<= ]]>   #{condition3}
+		</if>
+		
+	</where>
+
+	
+	
+	group by  cusid,mediatype,money,value,time
+  
+  </select>
+  
+  <resultMap id="BaseResultDtchgorderMap" type="com.zeng.ocs.po.DtChgOrderVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="mode" property="mode" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="value" property="value" jdbcType="DOUBLE" />
+    <result column="acctime" property="accdate" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectTlAccountDtchgorder" resultMap="BaseResultDtchgorderMap" parameterType="com.zeng.ocs.util.PaginationUtil">
+  	select cusid,mode,money ,value,left(accdate,7) as acctime,sum(sl) as id 
+  	
+  	from dtchgorder_c 
+  	
+	  	<where>
+		  	<if test="condition1 != null and condition1 != ''">
+		  		cusid = #{condition1}
+	  		</if>
+			<if test="condition2 != null and condition2 != ''">
+				and left(accdate,7) <![CDATA[>= ]]> #{condition2} 
+			</if>
+			<if test=" condition3 != null and condition3 != ''">
+				and left(accdate,7) <![CDATA[<= ]]>   #{condition3}
+			</if>
+			
+		</where>
+
+	
+	
+	group by  cusid,mode,money,value,acctime
+  
+  </select>
+  
+  <resultMap id="BaseResultDtmessageMap" type="com.zeng.ocs.po.DtMessageVo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusid" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="utime" property="updatetime" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectTlAccountDtmessage" resultMap="BaseResultDtmessageMap" parameterType="com.zeng.ocs.util.PaginationUtil">
+  	select cusid,money ,left(updatetime,7) as utime ,sum(sl) as id 
+  	
+  	from dtmessage_c 
+  	
+		    	<where>
+				  	<if test="condition1 != null and condition1 != ''">
+		  				cusid = #{condition1}
+	  				</if>
+					<if test="condition2 != null and condition2 != '' ">
+						and left(updatetime,7) <![CDATA[>= ]]>  #{condition2} 
+					</if>
+					<if test=" condition3 != null and condition3 != ''">
+						and left(updatetime,7) <![CDATA[<= ]]>   #{condition3}
+					</if>
+					
+				</where>
+
+	
+	
+	group by  cusid,money,utime
+  
+  </select>
+  
+  </mapper>

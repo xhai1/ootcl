@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zeng.ocs.dao.HotLineDao" >
+  <resultMap id="BaseResultMap" type="com.zeng.ocs.po.HotLine" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+    <result column="business" property="business" jdbcType="VARCHAR" />
+    <result column="custelephone" property="cusTelephone" jdbcType="VARCHAR" />
+    <result column="ivr" property="ivr" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="itsystem" property="itSystem" jdbcType="VARCHAR" />
+    <result column="itremark" property="itRemark" jdbcType="VARCHAR" />
+    <result column="bigtype" property="bigType" jdbcType="VARCHAR" />
+    <result column="cusname" property="cusName" jdbcType="VARCHAR" />
+    <result column="chasystem" property="chaSystem" jdbcType="VARCHAR" />
+    <result column="orderid" property="orderId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cusphone.id as id, cusphone.cusid as cusid, cusphone.business as business , cusphone.cusephone as custelephone,ivr, cusphone.telephone as telephone ,itsystem,itremark, bigtype, cusname, chasystem,orderid
+  </sql>
+  
+ <!-- 查询 -->
+ <select id="selectCountByCondition" resultType="java.lang.Long" parameterType="com.zeng.ocs.util.PaginationUtil" >
+    select 
+    	 count(*)
+    from 
+    
+    	(select cusid from cusphone
+    		<where>
+	    		<if test="condition1 != null and condition1!=''">
+	    			 business like concat('%',#{condition1,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition2 != null and condition2 != ''">
+		    	  and	cusphone like  concat('%',#{condition2,jdbcType=VARCHAR},'%') 
+		    	</if> 
+			    <if test="condition3 != null and condition3!=''">
+	    			 and telephone like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition4 != null and condition4!=''">
+	    			 and bigtype like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+			    </if>			    
+    		 </where>
+    	)  A
+    
+       left join customer on  customer.cusid = A.cusid    
+       		<where>
+		    	<if test="condition5 != null and condition5 != ''">
+		    		and cusname = #{condition5,jdbcType=VARCHAR}
+		    	</if>    
+	    	</where> 	 
+  </select> 
+   
+   
+   
+     <!-- 条件查询 -->
+  <select id="selectHotLineByCondition" resultMap="BaseResultMap" parameterType="com.zeng.ocs.util.PaginationUtil" >
+    select 
+    	    A.id as id, A.cusid as cusid, A.business as business , A.cusphone as custelephone,A.ivr as ivr,
+    	   A.telephone as telephone ,A.itsystem as itsystem,A.itremark as itremark, A.bigtype as bigtype, customer.cusname as cusname, A.chasystem as chasystem,A.orderid as orderid
+    from 
+    	(select * from cusphone
+    		<where>
+	    		<if test="condition1 != null and condition1!=''">
+	    			 business like concat('%',#{condition1,jdbcType=VARCHAR},'%')
+			    </if>
+			     <if test="condition2 != null and condition2 != ''">
+		    		and cusphone like  concat('%',#{condition2,jdbcType=VARCHAR},'%') 
+		    	</if> 
+			    <if test="condition3 != null and condition3!=''">
+	    			 and telephone like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+			    </if>
+			    <if test="condition4 != null and condition4!=''">
+	    			 and bigtype like concat('%',#{condition3,jdbcType=VARCHAR},'%')
+			    </if>			    
+    		 </where>
+    		 order by id desc
+    		 limit #{begin,jdbcType=INTEGER},#{end,jdbcType=INTEGER}
+    	 ) A   
+    left join customer using(cusid) 
+    	<where>
+		    	<if test="condition5 != null and condition5 != ''">
+		    		and cusname =  #{condition5,jdbcType=VARCHAR}
+		    	</if>    
+	    </where>
+	order by A.id desc
+  </select>
+   
+   
+     <select id="selectHotLineAll" resultMap="BaseResultMap"  >
+	   	  select
+	    		 <include refid="Base_Column_List" />
+	      from cusphone left join  customer using(cusid) order by orderid desc
+ 	 </select>
+  
+   <select id="selectHotLineBusinessAndOthersByLike" resultMap="BaseResultMap"  >
+	   select
+	    	 <include refid="Base_Column_List" />
+	   from cusphone left join  custype using(cusid) left join customer using(cusid) where cusphone.business  like concat('%',#{business,jdbcType=VARCHAR},'%') and  customer.telephone like concat('%',#{cusTelephone,jdbcType=VARCHAR},'%') and cusphone.telephone like  concat('%',#{telephone,jdbcType=VARCHAR},'%') and bigtype like concat('%',#{bigType,jdbcType=VARCHAR},'%')  order by id desc
+  </select>
+
+
+
+<!-- 添加 -->
+  <insert id="insertHotLine" parameterType="com.zeng.ocs.po.HotLine" >
+    insert into cusphone (cusid, bigtype, telephone, 
+      IVR , business , orderid , itsystem , 
+      itremark , chasystem,cusphone )
+    values (#{cusId,jdbcType=VARCHAR}, #{bigType,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
+      #{ivr,jdbcType=VARCHAR}, #{business,jdbcType=CHAR}, #{orderId,jdbcType=INTEGER}, #{itSystem,jdbcType=VARCHAR}, 
+      #{itRemark,jdbcType=VARCHAR}, #{chaSystem,jdbcType=VARCHAR}, #{cusTelephone,jdbcType=VARCHAR})
+  </insert>
+  
+  <select id="selectHotLineByIdAndCusid" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.HotLine"  >
+	select 
+		cusphone.id as id, cusphone.cusid as cusid, cusphone.business as business, cusphone.telephone as telephone  ,ivr, 
+		itsystem,itremark, bigtype,  chasystem,orderid,cusphone.cusphone as custelephone,cusname
+	from
+	
+	 (select cusname,customer.telephone as custelephone from customer where cusid=#{cusId,jdbcType=VARCHAR} limit 1) A  
+	 
+	 JOIN cusphone 
+	 where cusphone.id=#{id,jdbcType=BIGINT}
+	
+  </select>
+  
+  <!-- 更改 -->
+  <update id="updateHotLine"  parameterType="com.zeng.ocs.po.HotLine" >
+    update cusphone 
+    set 
+    cusid = #{cusId,jdbcType=VARCHAR},
+    business = #{business,jdbcType=VARCHAR},ivr = #{ivr,jdbcType=VARCHAR}
+    ,telephone = #{telephone,jdbcType=VARCHAR},itsystem = #{itSystem,jdbcType=VARCHAR}
+    ,itremark = #{itRemark,jdbcType=VARCHAR},bigtype = #{bigType,jdbcType=VARCHAR}
+    ,chasystem = #{chaSystem,jdbcType=VARCHAR} ,orderid = #{orderId,jdbcType=INTEGER}
+    ,cusphone = #{cusTelephone,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+    
+  <update id="updateCustomerByHotLine"  parameterType="com.zeng.ocs.po.HotLine" >
+    update customer 
+  		  set telephone = #{cusTelephone,jdbcType=VARCHAR},cusname = #{cusName,jdbcType=VARCHAR}
+    where cusid = #{cusId,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  <delete id="deleteHotLineById"  parameterType="java.lang.Integer" >
+  	delete from cusphone    
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="batchDelete"  parameterType="java.util.List" >
+  	delete  from cusphone    
+    where id in (
+ 	 <foreach collection="list" index="index" item="item" separator=",">
+		#{item,jdbcType=INTEGER}  	
+  	 </foreach>
+  	)
+  </delete>
+  
+  <select id="selectHotAll" resultMap="BaseResultMap" parameterType="com.zeng.ocs.po.HotLine"  >
+	select 
+		cusphone.id as id,cusphone.cusid as cusid,
+		bigtype,cusphone.telephone as telephone,ivr,
+		business,orderid,
+		itsystem,itremark,
+		chasystem,cusname,cusphone.cusphone as custelephone
+	from cusphone left join customer on cusphone.cusid=customer.cusid
+  </select>
+  <!-- excel导入开始 -->
+<!--   <insert id="batchInsert"  parameterType="java.util.List" >
+  	insert into cusphone(cusid,bigtype,telephone,ivr,business,itsystem,itremark,chasystem,cusphone) values
+  	<foreach collection="list" index="index" item="item" separator=",">
+  	(
+		 #{item.cusId,jdbcType=VARCHAR},#{item.bigType,jdbcType=VARCHAR},
+		 #{item.telephone,jdbcType=VARCHAR},#{item.ivr,jdbcType=VARCHAR},
+		 #{item.business,jdbcType=VARCHAR},
+		 #{item.itSystem,jdbcType=VARCHAR},#{item.itRemark,jdbcType=VARCHAR},
+		 #{item.chaSystem,jdbcType=VARCHAR} 	
+		 #{item.cusTelephone,jdbcType=VARCHAR} 	
+  	)
+  	</foreach>
+  </insert> -->
+  
+    
+  <insert id="insertSelectiveHotLine" parameterType="com.zeng.ocs.po.HotLine">
+    insert into cusphone
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cusId != null">
+        cusid,
+      </if>
+      <if test="bigType != null">
+        bigtype,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="ivr != null">
+        ivr,
+      </if>
+      <if test="business != null">
+        business,
+      </if>
+      <if test="itSystem != null">
+        itsystem,
+      </if>
+      <if test="itRemark != null">
+        itremark,
+      </if>
+      <if test="chaSystem != null">
+        chasystem,
+      </if>
+      <if test="cusTelephone != null">
+        cusphone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+    
+     <if test="cusId != null">
+         #{cusId,jdbcType=INTEGER},
+      </if>
+      <if test="bigType != null">
+         #{bigType,jdbcType=CHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=CHAR},
+      </if>
+      <if test="ivr != null">
+        #{ivr,jdbcType=CHAR},
+      </if>
+      <if test="business != null">
+         #{business,jdbcType=CHAR},
+      </if>
+      <if test="itSystem != null">
+         #{itSystem,jdbcType=CHAR},
+      </if>
+      <if test="itRemark != null">
+         #{itRemark,jdbcType=CHAR},
+      </if>
+      <if test="chaSystem != null">
+        #{chaSystem,jdbcType=CHAR},
+      </if>
+      <if test="cusTelephone != null">
+       #{cusTelephone,jdbcType=CHAR},
+      </if>      
+    </trim>
+    </insert>
+    
+  <select id="selectByTelephone" resultMap="ImportBaseResultMap" parameterType="com.zeng.ocs.po.HotLine" >
+  		select
+  		id,cusid ,bigtype,telephone,ivr,business,itsystem ,itremark,chasystem  ,orderid 
+  		
+  		from cusphone where telephone like  #{telephone,jdbcType=VARCHAR}
+  </select>  
+  
+    <resultMap id="ImportBaseResultMap" type="com.zeng.ocs.po.HotLine" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+    <result column="business" property="business" jdbcType="VARCHAR" />
+    <result column="ivr" property="ivr" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="itsystem" property="itSystem" jdbcType="VARCHAR" />
+    <result column="itremark" property="itRemark" jdbcType="VARCHAR" />
+    <result column="bigtype" property="bigType" jdbcType="VARCHAR" />
+    <result column="chasystem" property="chaSystem" jdbcType="VARCHAR" />
+    <result column="orderid" property="orderId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  
+  <update id="updateImportHotline"  parameterType="com.zeng.ocs.po.HotLine" >
+     update cusphone 
+			 set 
+			 		cusid = #{cusId,jdbcType=VARCHAR},
+				    business = #{business,jdbcType=VARCHAR},bigtype = #{bigType,jdbcType=VARCHAR}
+				    ,ivr = #{ivr,jdbcType=VARCHAR}
+				    ,itsystem = #{itSystem,jdbcType=VARCHAR}
+				    ,itremark = #{itRemark,jdbcType=VARCHAR}
+				    ,chasystem = #{chaSystem,jdbcType=VARCHAR} 
+				     ,cusphone = #{cusTelephone,jdbcType=VARCHAR} 
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+   <!-- excel导入结束 -->
+  
+<!--   //导入查询 -->
+  <resultMap id="BaseResultImportMap" type="com.zeng.ocs.po.HotLine" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cusid" property="cusId" jdbcType="VARCHAR" />
+    <result column="business" property="business" jdbcType="VARCHAR" />
+    <result column="cusphone" property="cusTelephone" jdbcType="VARCHAR" />
+    <result column="ivr" property="ivr" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="itsystem" property="itSystem" jdbcType="VARCHAR" />
+    <result column="itremark" property="itRemark" jdbcType="VARCHAR" />
+    <result column="bigtype" property="bigType" jdbcType="VARCHAR" />
+    <result column="chasystem" property="chaSystem" jdbcType="VARCHAR" />
+    <result column="orderid" property="orderId" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="selectHotLineByTelephoneAndBigType"  resultMap = "BaseResultImportMap" parameterType="com.zeng.ocs.po.HotLine">
+  			select * from cusphone
+  			<where>
+  				<if test="telephone != null and telephone !=''">
+	    			 telephone = #{telephone,jdbcType=VARCHAR} 
+			    </if>
+			    <if test="bigType != null and bigType !=''">
+	    			and bigtype = #{bigType,jdbcType=VARCHAR} 
+			    </if>
+  			</where>
+  			limit 1
+  </select>
+  
+  
+  <resultMap id="BaseResultCusTypeMap" type="com.zeng.ocs.po.CusType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cusid" property="cusid" jdbcType="CHAR" />
+    <result column="typeid" property="typeid" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="typetimeing" property="typetimeing" jdbcType="VARCHAR" />
+    <result column="business" property="business" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectCusType"  resultMap = "BaseResultCusTypeMap" parameterType="com.zeng.ocs.po.HotLine">
+  			select * from custype
+  			<where>
+  				<if test="cusId != null and cusId !=''">
+	    			 cusid = #{cusId,jdbcType=VARCHAR} 
+			    </if>
+			    <if test="bigType != null and bigType !=''">
+	    			and typetimeing = #{bigType,jdbcType=VARCHAR} 
+			    </if>
+  			</where>
+  			limit 1
+  </select>
+  
+  
+  <select id="selectMaxIdOfCusType"  resultType = "java.lang.Integer" >
+  			select max(id) from custype
+  </select>
+  
+  <insert id="insertSelectiveCusType" parameterType="com.zeng.ocs.po.CusType">
+    insert into custype
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cusid != null">
+        cusid,
+      </if>
+      <if test="typeid != null">
+        typeid,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="typetimeing != null">
+        typetimeing,
+      </if>
+      <if test="business != null">
+        business,
+      </if>
+      <if test="brand != null">
+        brand,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cusid != null">
+        #{cusid,jdbcType=CHAR},
+      </if>
+      <if test="typeid != null">
+        #{typeid,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="typetimeing != null">
+        #{typetimeing,jdbcType=VARCHAR},
+      </if>
+      <if test="business != null">
+        #{business,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null">
+        #{brand,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    
+    
+  </insert>
+  
+</mapper>

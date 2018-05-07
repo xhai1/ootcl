@@ -1,0 +1,597 @@
+@charset "utf-8";
+*{
+	font-size:12px;
+	text-decoration:none;
+	/* background-color: #FFEEF0; */
+}
+.redStripe {
+	left: 50%;
+	top: 30%;
+	height: 600px;
+	width: 500px;
+	position: absolute;
+}
+.databackup {
+	position: fixed;
+	height: 200px;
+	width: 200px;
+	left: 40%;
+	top: 30%;
+}
+
+.center {
+	text-align: center;
+}
+.usermanage {
+	font-size: 16px;
+	font-weight: bold;
+	color: #3B95C8;
+	background-color: #EDF6FA;
+	text-align: center;
+}
+.usersearch {
+	text-align: right;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.usersearch .userbutton {
+	background-color: #EDF6FA;
+	margin-left: 5px;
+}
+.usersearch .userinput {
+	width: 80px;
+	margin-left: 5px;
+}
+.usertable tr {
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #EDF6FA;
+	border-bottom-color: #EDF6FA;
+}
+
+
+
+
+
+.redAndBold {
+	font-size: 18px;
+	font-weight: bold;
+	color: #FF0000;
+}
+.red {
+	color: #FF0000;
+}
+.bg_color {
+	background-color: #FFFFFF;
+	height: 25px;
+	font-size: 16px;
+	font-weight: bold;
+	border-top-color: #000000;
+	border-right-color: #000000;
+	border-bottom-color: #000000;
+	border-left-color: #000000;
+}
+
+.change {
+	border: 1px solid #FF6666;
+	height: 10px;
+	width: 10px;
+	vertical-align: baseline;
+	text-align: center;
+}
+.center .heightl {
+	vertical-align: middle;
+	font-size: 16px;
+	text-align: center;
+}
+.center .textimg {
+	/* [disabled]vertical-align: middle; */
+}
+.grayStripe {
+	background-color: #EDF6FA;
+	text-align: center;
+	font-weight: bold;
+	font-size: 18px;
+	color: #3B95C8;
+}
+.floatleft {
+	float: left;
+}
+.floatright {
+	float: right;
+}
+.rightstyle div .userup {
+	width: 660px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 450px;
+	background-color: #EDF6FA;
+	margin-top: 40px;
+}
+.dis {
+	margin-right: 15px;
+	margin-left: 15px;
+}
+
+
+
+.clearfloat {
+	clear: both;
+}
+
+.addBorder {
+	height: 8px;
+	border: 1px solid #000000;
+	font-size: 12px;
+	width: 8px;
+}
+.rightstyle .righttable thead tr th {
+	border: 1px solid #000000;
+	background-color: #3B95C8;
+	color: #FFFFFF;
+}
+
+.rightstyle .righttable td {
+	border: 1px solid #000000;
+	background-color: #EDF6FA;
+}
+
+
+.bg_color {
+	border: 1px solid #FF6600;
+	margin: 3px;
+}
+.alignc {
+	margin-top: 25px;
+	margin-left: 35px;
+}
+.leftalign {
+	margin-top: 5px;
+	margin-left: 5px;
+}
+.righttable {
+	border: 1px solid #000000;
+	border-collapse: collapse;
+	text-align: center;
+	width: 100%;
+}
+.listnone {
+	list-style-type: none;
+	list-style-image: none;
+}
+
+
+
+.righttable tbody .righttabletr {
+	border: 1px solid #000000;
+	background-color: #ccccff;
+}
+.rightstylercus .custimerecord {
+	border: 1px solid #000000;
+	width: 100%;
+	text-align: center;
+	border-collapse: collapse;
+	background-color: #EDF6FA;
+	margin-top: 15px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.rightstylercus .custimerecord tr td {
+	border: 1px solid #000000;
+}
+
+.rightstylercus {
+	width: 860px;
+	margin-top: 50px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 10px;
+	padding-right: 10px;
+	padding-bottom: 50px;
+	padding-left: 10px;
+}
+.horizontable {
+	width: 100%;
+	background-color: #EDF6FA;
+	margin-top: 50px;
+}
+.horizontable tr td input {
+	width: 100%;
+	text-align: center;
+}
+
+.horizontable tr th {
+	border: 1px solid #000000;
+	text-align: center;
+}
+.horizontable tr td {
+	border: 1px solid #000000;
+	text-align: center;
+}
+
+
+.horizontable tr {
+	height: 25px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+
+.rightstylercus .centertitle {
+	font-family: "黑体";
+	font-size: 16px;
+	font-weight: bold;
+	color: #3B95C8;
+	text-align: center;
+	margin-bottom: 20px;
+	width: 600px;
+}
+
+
+
+.tbfooter .floatright .disabled {
+	border: 1px solid #C0DCC0;
+	margin-right: 10px;
+	margin-left: 5px;
+}
+.tbfooter .floatright .current {
+	border: 1px solid #C0DCC0;
+	width: 20px;
+	display: inline-block;
+	margin-right: 1px;
+	margin-left: 1px;
+	padding-right: 5px;
+	padding-left: 5px;
+	text-align: center;
+}
+.number {
+	width: 20px;
+}
+.tbfooter .floatright .crc {
+	background-color: #EDF6FA;
+}
+.rightstyle .reportAlign form .report {
+	display: inline-block;
+	margin-left: 15px;
+}
+
+
+
+
+
+.rightstyle {
+	margin-right: 1px;
+	margin-left: 1px;
+
+}
+
+
+
+
+.inputj {
+	width: 80px;
+	margin-right: 5px;
+}
+.right {
+	text-align: right;
+}
+
+.reportAlign {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.tbfooter {
+	font-size: 12px;
+	margin-top: 5px;
+}
+.rightstyletotalacc {
+	margin-right: 1px;
+	margin-left:  1px;
+
+}
+.rightstyletotalacc .totalacctitle {
+	font-family: "黑体";
+	font-size: 16px;
+	font-weight: bold;
+	color: #3B95C8;
+	text-align: center;
+	margin-top: 20px;
+}
+.rightstyletotalacc div .totalacctable {
+	text-align: center;
+	border: 1px solid #000000;
+	border-collapse: collapse;
+	background-color: #EDF6FA;
+	width: 100%;
+}
+.rightstyletotalacc div .totalacctable td {
+	border: 1px solid #000000;
+}
+.rightstyletotalacc div .totalacctable  th {
+	border: 1px solid #000000;
+}
+.usertable {
+	border-collapse: collapse;
+	border: 1px solid #EDF6FA;
+	width: 800px;
+	margin-top: 0;
+	margin-right: auto;
+	margin-bottom: 0;
+	margin-left: auto;
+	text-align: center;
+}
+
+.usertable tr th {
+	color: #FFFFFF;
+	background-color: #3B95C8;
+}
+.usertable {
+	width: 100%;
+	margin-right: auto;
+	margin-left: auto;
+}
+.userpage {
+	margin-top: 10px;
+	width: 100%;
+}
+
+
+.usertable tr td {
+	background-color: #EDF6FA;
+}
+.monthrecord {
+	font-size: 16px;
+	font-weight: bold;
+	color: #3B95C8;
+	background-color: #EDF6FA;
+	text-align: center;
+}
+.monthfee {
+	width: 95%;
+	margin-top: 5px;
+	margin-right: auto;
+	margin-left: auto;
+	border-collapse: collapse;
+	height: 300px;
+}
+.monbackground {
+	background-color: #D49AA9;
+	padding: 5px;
+	width: 60%;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 15px;
+}
+
+.monthfee .topandbottom {
+
+}
+
+
+.monthfee .topandbottom td {
+	overflow: hidden;
+	margin-right: 5px;
+	margin-left: 5px;
+	border: 1px solid #000000;
+}
+.monthfee .monthrule td {
+	padding: 15px;
+}
+.rightstyle .clearfloat .floathot tr th {
+	background-color: #3B95C8;
+	text-align: center;
+	font-size: 12px;
+	color: #FFFFFF;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #000000;
+	border-right-color: #000000;
+	border-bottom-color: #000000;
+}
+.rightstyle .clearfloat .floathot tr td {
+	background-color: #EDF6FA;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #000000;
+	border-right-color: #000000;
+	border-bottom-color: #000000;
+}
+.rightstyle .righttable tbody .righttabletr td a {
+	font-weight: bold;
+	cursor: pointer;
+}
+
+
+.warn {
+	font-weight: bold;
+	color: #FF0000;
+}
+.green {
+	color: #009F00;
+}
+.black {
+	color: #000000;
+}
+.errpage {
+	width: 500px;
+	margin-top: 50px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.sysparam {
+	width: 500px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 50px;
+	background-color: #EDF6FA;
+	padding-left: 5%;
+	height: 600px;
+	left: 28%;
+	top: 30%;
+	position: absolute;
+}
+.rightstyle .hotlineadd {
+	background-color: #EDF6FA;
+	height: 500px;
+	width: 500px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 10px;
+}
+.maxdis {
+	margin-left: 50px;
+}
+.mapper .floatleft  h3 {
+	background-color: #EDF6FA;
+}
+.mapper .floatleft li {
+	background-color: #A6CAF0;
+	height: 20px;
+	
+	border-bottom-width: 1px;
+	
+	border-bottom-style: solid;
+	
+	border-bottom-color: #000000;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: #FFFFFF;
+}
+
+.sel {
+	border-bottom-style:solid;border-bottom-width:1px;border-bottom-color:#000000;
+}
+.mapper div {
+
+}
+.bdquit {
+	margin: 0px;
+	padding: 0px;
+}
+.control {
+	width: 12px;
+	height: 20px;
+	position: relative;
+	top: 50px;
+	margin-top: auto;
+	margin-bottom: auto;
+}
+.mapper .floatleft .timerdbg {
+	background-color: #A6CAF0;
+	width: 200px;
+	padding-right: 10px;
+	padding-left: 10px;
+	padding-bottom: 100%;
+}.mapper .rightstylercus.floatleft.maxdis .custimerecord tr td input {
+	width: 100%;
+}
+.addclass {
+	background: #8AC007;
+	border-radius: 25px;
+	margin-right: auto;
+	margin-left: auto;
+	padding: 10px;
+	width: 30%;
+	margin-top: 60px;
+	
+}
+.alignr {
+	text-align: right;
+}
+.sysparam form table tr .center .multi981select {
+	width: 330px;
+}
+.sysparamtitle {
+	font-size: 16px;
+	color: #3B95C8;
+	background-color: #EDF6FA;
+	text-align: center;
+	width: 100%;
+	margin-top: 100px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	margin-left: 45px;
+}
+.smsutable {
+	height: 300px;
+	width: 300px;
+	border-collapse: collapse;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 15%;
+}
+.smsutable tr th {
+	border: 1px solid #000000;
+}
+.smsutable tr td {
+	border: 1px solid #000000;
+}
+.comlist {
+	background-color: #FFDCE0;
+	width: 25%;
+	max-height: 568px;
+	float: left;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+.openswitch {
+	float: left;
+	height: 768px;
+	width: 1%;
+	border: 1px solid #009FFF;
+}
+.manstan {
+	float: left;
+	max-height: 568px;
+	width: 75%;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+.manstan #cusstandard .manstantable {
+	width: 50%;
+	margin-top: 100px;
+	margin-right: auto;
+	margin-left: auto;
+	border: 1px solid #000000;
+}
+
+.manstan .manstantitile {
+	color: #3B95C8;
+	background-color: #EDF6FA;
+	text-align: center;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.manstan #cusstandard .manstantable tr td {
+	border: 1px solid #000000;
+	text-align: center;
+}
+.openswitch span {
+	line-height: 768px;
+}
+.comlist .manstanul {
+	padding: 0px;
+}
+.fileupload {
+	background-image: url(file:///C|/Users/admin/Desktop/ocs/images/fileupload.jpg);
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	height: 516px;
+	width: 554px;
+}
+.allwidth{
+	width: 100%;
+}
